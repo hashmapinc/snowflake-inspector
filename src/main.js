@@ -27,7 +27,7 @@ var network = new vis.Network(container, data, options);
 fetch("http://localhost:1111/src/grants.json")
   .then(response => response.json())
   .then(json => {
-    values(json);
+    render(json);
   });
 
 var getColor = function(type) {
@@ -40,9 +40,7 @@ var getColor = function(type) {
   return x;
 }
 
-var x = [];
-var y = new vis.DataSet([]);
-var values = function(json){
+var render = function(json){
   json.forEach(element => {    
     if((element.GRANTED_TO_TYPE === 'USER' || element.GRANTED_TO_TYPE === 'ROLE' ) && (element.SNOWFLAKE_OBJECT_TYPE === 'ROLE'  || element.SNOWFLAKE_OBJECT_TYPE === 'USER')){   
       try {
