@@ -45,12 +45,20 @@ var y = new vis.DataSet([]);
 var values = function(json){
   json.forEach(element => {    
     if((element.GRANTED_TO_TYPE === 'USER' || element.GRANTED_TO_TYPE === 'ROLE' ) && (element.SNOWFLAKE_OBJECT_TYPE === 'ROLE'  || element.SNOWFLAKE_OBJECT_TYPE === 'USER')){   
-        try {
-          nodes.add({id: element.GRANTED_TO_NAME, label: element.GRANTED_TO_NAME, shape: "box", color: { border: '#2B7CE9', background: getColor(element.GRANTED_TO_TYPE),
-          highlight: {
-            border: '#2B7CE9',
-            background: '#D2E5FF'
-          }},
+      try {
+        nodes.add({
+          id: element.GRANTED_TO_NAME, 
+          label: element.GRANTED_TO_NAME, 
+          shape: "box", 
+          color: { 
+            border: '#2B7CE9', 
+            background: getColor(element.GRANTED_TO_TYPE),
+            highlight: 
+            {
+              border: '#2B7CE9',
+              background: '#D2E5FF'
+            }
+          },
           widthConstraint: { maximum: 150 }
         });
       }
@@ -59,11 +67,18 @@ var values = function(json){
         //errors if there are duplicate items
       }
       try {
-        nodes.add({id: element.OBJECT_NAME, label: element.OBJECT_NAME, shape: "box", color: { border: '#2B7CE9', background: getColor(element.SNOWFLAKE_OBJECT_TYPE),
-          highlight: {
-            border: '#2B7CE9',
-            background: '#D2E5FF'
-          }},
+        nodes.add({
+          id: element.OBJECT_NAME, 
+          label: element.OBJECT_NAME, 
+          shape: "box", 
+          color: { 
+            border: '#2B7CE9', 
+            background: getColor(element.SNOWFLAKE_OBJECT_TYPE),
+            highlight: {
+              border: '#2B7CE9',
+              background: '#D2E5FF'
+            }
+          },
           widthConstraint: { maximum: 150 }
         });
       }
