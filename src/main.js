@@ -54,7 +54,7 @@ network.on( 'select', function(properties) {
       oldNodes.forEach(node => {
         node.color = 
         { 
-          border: 'rgb(211, 211, 211, 0.1)', 
+          border: 'rgb(211, 211, 211, 1)', 
           background: node.initialColor,
           highlight: 
           {
@@ -170,7 +170,7 @@ var render = function(json){
           label: element.OBJECT_NAME, 
           shape: "box", 
           color: { 
-            border: 'rgb(211, 211, 211, 0.1)', 
+            border: 'rgb(211, 211, 211, 1)', 
             background: getColor(element.SNOWFLAKE_OBJECT_TYPE),
             highlight: {
               border: '#2B7CE9',
