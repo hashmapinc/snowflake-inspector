@@ -59,6 +59,15 @@ fetch("http://localhost:1111/src/granted1.json")
     render(json);
   });
 
+  $("form").submit(function(e){
+    e.preventDefault();
+    $('#createModal').modal('toggle');
+    let text = $('textarea#result').val();
+    render(JSON.parse(text));
+  });
+
+
+
 var getColor = function(type) {
   var color;
   if(type === "ROLE"){
@@ -150,6 +159,12 @@ var render = function(json){
     // initialize network!
  var network = new vis.Network(container, data, options);
 
+ network.moveTo({
+  position: {x:1, y:1},
+  scale: 3,
+  offset: {x:5, y:5}
+  })
+
  let getLinkedNodes = function(nodeId, nodeArray, edgeArray){ 
    if(nodeId) {
       let childEdges = network.getConnectedEdges(nodeId);
@@ -223,4 +238,3 @@ var render = function(json){
   window.onresize = function() {network.fit();}
 
 }
-

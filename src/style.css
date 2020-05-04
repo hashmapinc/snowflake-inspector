@@ -1,5 +1,14 @@
 #mynetwork {
   width: 100%;
-  height: 800px;
-  border: 1px solid lightgray;
+  height: 100vh;
+  overflow: hidden;
+  /* border: 1px solid lightgray; */
+}
+.queryStyle {
+  height: 300px;     
+  overflow: -moz-scrollbars-vertical;          
+  overflow-y: scroll;
+  border: 1px; 
+  background-color: rgb(211,211,211, 0.3); 
+  border-radius: 5px;
 }
