@@ -1,9 +1,9 @@
 'use strict';
 
 // create a network
-var container = document.getElementById('mynetwork');
+const container = document.getElementById('mynetwork');
 
-var options = {
+const options = {
   nodes: {
     shadow:{
       enabled: true,
@@ -40,7 +40,6 @@ var options = {
 let oldClickedNodeIds = [];
 let oldClickedEdgeIds = [];
 
-
 // network.on( 'deselectNode', function(properties) {
 
 //   const previousIds = properties.previousSelection.nodes;
@@ -59,17 +58,40 @@ fetch("http://localhost:1111/src/granted1.json")
     render(json);
   });
 
-  $("form").submit(function(e){
-    e.preventDefault();
-    $('#createModal').modal('toggle');
-    let text = $('textarea#result').val();
-    render(JSON.parse(text));
-  });
+$("form").submit(function(e){
+  e.preventDefault();
+  $('#createModal').modal('toggle');
+  let text = $('textarea#result').val();
+  render(JSON.parse(text));
+});
+
+// copy the query to clipboard
+const writeBtn = document.querySelector('.write-btn');
+const inputEl = document.querySelector('.to-copy').firstChild;
+
+writeBtn.addEventListener('click', () => {
+  const inputValue = inputEl.data
+  if (inputValue) {
+    navigator.clipboard.writeText(inputValue)
+      .then(() => {
+        if (writeBtn.innerText !== 'Copied!') {
+          const originalText = writeBtn.innerText;
+          writeBtn.innerText = 'Copied!';
+          setTimeout(() => {
+            writeBtn.innerText = originalText;
+          }, 1500);
+        }
+      })
+      .catch(err => {
+        console.log('Something went wrong', err);
+      })
+  }
+});
 
 
 
-var getColor = function(type) {
-  var color;
+const getColor = function(type) {
+  let color;
   if(type === "ROLE"){
     color = "rgb(255, 232, 232, 1)";
   }
@@ -79,9 +101,9 @@ var getColor = function(type) {
   return color;
 }
 
-var nodes = new vis.DataSet([]);
 
-var render = function(json){
+const render = function(json){
+  let nodes = new vis.DataSet([]);
   json.forEach(element => {    
     if((element.SNOWFLAKE_OBJECT_TYPE === 'ROLE') && (element.GRANTED_TO_NAME !=="SECURITYADMIN")) {   
       try {
@@ -144,32 +166,30 @@ var render = function(json){
 
   json.forEach(element => {
     if((element.GRANTED_TO_NAME !=="SECURITYADMIN") && (element.PRIVILEGE !== 'OWNERSHIP')) {
-      x.push({from: element.OBJECT_NAME, to: element.GRANTED_TO_NAME, arrows:'to'});
-     // edges.add({from: element.OBJECT_NAME, to: element.GRANTED_TO_NAME, arrows:'to'})
+      x.push({from: element.GRANTED_TO_NAME, to: element.OBJECT_NAME, arrows:'to'});
     }
   })
   
-  var edges = new vis.DataSet(x);
+  let edges = new vis.DataSet(x);
 
   // provide the data in the vis format
-  var data = {
+  let data = {
     nodes: nodes,
     edges: edges
   };
     // initialize network!
- var network = new vis.Network(container, data, options);
+ let network = new vis.Network(container, data, options);
 
- network.moveTo({
-  position: {x:1, y:1},
-  scale: 3,
-  offset: {x:5, y:5}
-  })
+//  network.moveTo({
+//   position: {x:-2000, y:500},
+//   scale: 1  
+//   })
 
  let getLinkedNodes = function(nodeId, nodeArray, edgeArray){ 
    if(nodeId) {
       let childEdges = network.getConnectedEdges(nodeId);
       let directedEdges = edges.get(childEdges)
-          .filter((edge) => { return edge.to === nodeId })
+          .filter((edge) => { return edge.from === nodeId })
 
       directedEdges.map(edge => {
         edge.color = 'blue';
@@ -180,7 +200,7 @@ var render = function(json){
 
      edges.update(directedEdges);
 
-    let childNodes = network.getConnectedNodes(nodeId, 'from');
+    let childNodes = network.getConnectedNodes(nodeId, 'to');
     if(childNodes) {
       childNodes.forEach(child => {
         if(nodeArray.indexOf(child) === -1){
