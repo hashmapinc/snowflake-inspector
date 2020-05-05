@@ -52,7 +52,7 @@ let oldClickedEdgeIds = [];
 // });
 
 //load data
-fetch("http://localhost:1111/src/granted1.json")
+fetch("http://localhost:1111/src/sample.json")
   .then(response => response.json())
   .then(json => {
     render(json);
@@ -105,7 +105,7 @@ const getColor = function(type) {
 const render = function(json){
   let nodes = new vis.DataSet([]);
   json.forEach(element => {    
-    if((element.SNOWFLAKE_OBJECT_TYPE === 'ROLE') && (element.GRANTED_TO_NAME !=="SECURITYADMIN")) {   
+    if((element.SNOWFLAKE_OBJECT_TYPE === 'ROLE') && (element.GRANTED_TO_NAME !=="SECURITYADMIN") && (element.PRIVILEGE !== 'OWNERSHIP')) {   
       try {
         nodes.add({
           id: element.GRANTED_TO_NAME, 
