@@ -40,17 +40,6 @@ const options = {
 let oldClickedNodeIds = [];
 let oldClickedEdgeIds = [];
 
-// network.on( 'deselectNode', function(properties) {
-
-//   const previousIds = properties.previousSelection.nodes;
-//   const connectedNodes = network.getConnectedNodes(clickedId)
-
-//   connectedNodes.forEach(nodeId => {
-//     nodes.update({id: nodeId, color: {background: "orange"}});
-//   })
-// //  network.redraw();
-// });
-
 //load data
 fetch("http://localhost:1111/src/sample.json")
   .then(response => response.json())
@@ -88,8 +77,6 @@ writeBtn.addEventListener('click', () => {
   }
 });
 
-
-
 const getColor = function(type) {
   let color;
   if(type === "ROLE"){
@@ -100,7 +87,6 @@ const getColor = function(type) {
   }
   return color;
 }
-
 
 const render = function(json){
   let nodes = new vis.DataSet([]);
@@ -162,7 +148,7 @@ const render = function(json){
   });
 
   let x = []
-// create an array with edges
+  // create an array with edges
 
   json.forEach(element => {
     if((element.GRANTED_TO_NAME !=="SECURITYADMIN") && (element.PRIVILEGE !== 'OWNERSHIP')) {
