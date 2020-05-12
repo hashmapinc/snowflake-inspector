@@ -1,5 +1,26 @@
 'use strict';
 
+// import data
+import sample_data from './data/sample_hierarchy_data.json';
+
+// import css
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './css/style.css';
+
+// import libs
+import 'bootstrap';
+import { Network } from "vis-network/peer/esm/vis-network";
+import { DataSet } from "vis-data/peer/esm/vis-data"
+
+
+// main
+document.addEventListener("DOMContentLoaded", function(){
+  // Handler when the DOM is fully loaded
+
+  //load data
+  render(sample_data);
+});
+
 // create a network
 const container = document.getElementById('mynetwork');
 
@@ -39,13 +60,6 @@ const options = {
 
 let oldClickedNodeIds = [];
 let oldClickedEdgeIds = [];
-
-//load data
-fetch(window.location.origin + '/src/sample.json')
-  .then((response) => response.json())
-  .then((json) => {
-    render(json);
-  });
 
 $('form').submit(function (e) {
   e.preventDefault();
@@ -89,7 +103,7 @@ const getColor = function (type) {
 };
 
 const render = function (json) {
-  let nodes = new vis.DataSet([]);
+  let nodes = new DataSet([]);
   json.forEach((element) => {
     if (
       element.SNOWFLAKE_OBJECT_TYPE === 'ROLE' &&
@@ -163,7 +177,7 @@ const render = function (json) {
     }
   });
 
-  let edges = new vis.DataSet(x);
+  let edges = new DataSet(x);
 
   // provide the data in the vis format
   let data = {
@@ -171,7 +185,7 @@ const render = function (json) {
     edges: edges,
   };
   // initialize network!
-  let network = new vis.Network(container, data, options);
+  let network = new Network(container, data, options);
 
   //  network.moveTo({
   //   position: {x:-2000, y:500},

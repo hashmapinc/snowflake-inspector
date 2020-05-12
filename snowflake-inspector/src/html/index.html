@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en" class="h-100">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title><%= htmlWebpackPlugin.options.title %></title>
+</head>
+
+<body class="d-flex flex-column h-100">
+  <header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="#">Fixed navbar</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+          </li>
+        </ul>
+        <form class="form-inline mt-2 mt-md-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Begin page content -->
+  <main role="main" class="flex-shrink-0">
+    <div class="container">
+      <!-- Modal -->
+      <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Run this query in your Snowflake account and paste the
+                result in the box below</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="queryStyle">
+                <pre>
+                <code class="to-copy"> 
+                  USE ROLE ACCOUNTADMIN;
+                  WITH 
+                  ROLE_GRANTS AS (
+                    SELECT
+                      PRIVILEGE,
+                      GRANTED_ON AS SNOWFLAKE_OBJECT_TYPE,
+                      TABLE_CATALOG AS DATABASE,
+                      TABLE_SCHEMA AS SCHEMA,
+                      NAME AS OBJECT_NAME,
+                      GRANTED_TO AS GRANTED_TO_TYPE,
+                      GRANTEE_NAME AS GRANTED_TO_NAME
+                    FROM
+                      SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_ROLES
+                    WHERE
+                      DELETED_ON IS NULL
+                  ),
+                  USER_GRANTS AS (
+                    SELECT
+                    'USAGE' AS PRIVILEGE,
+                    'ROLE' AS SNOWFLAKE_OBJECT_TYPE,
+                    NULL AS DATABASE,
+                    NULL AS SCHEMA,
+                    ROLE AS OBJECT_NAME,
+                    GRANTED_TO AS GRANTED_TO_TYPE,
+                    GRANTEE_NAME AS GRANTED_TO_NAME
+                    FROM
+                      SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_USERS
+                    WHERE
+                      DELETED_ON IS NULL
+                  ),
+                  GRANTS AS (
+                    SELECT * FROM ROLE_GRANTS 
+                    UNION ALL 
+                    SELECT * FROM USER_GRANTS
+                  ),
+                  GRANTS_JSON AS (
+                    SELECT
+                      OBJECT_CONSTRUCT(*) AS GRANT_OBJ
+                    FROM
+                      GRANTS
+                  ),
+                  GRANTS_JSON_ARR AS (
+                    SELECT
+                      array_agg(*) AS GRANTS
+                    FROM
+                      GRANTS_JSON
+                  )
+                  SELECT * FROM GRANTS_JSON_ARR;
+                </code>
+            </pre>
+              </div>
+              <div>
+                <button type="button" class="btn btn-secondary btn-round write-btn">Copy to clipboard</button>
+              </div>
+              <div class="mt-4">
+                <form>
+                  <div class="form-group">
+                    <label>Paste the query output here</label>
+                    <textarea class="form-control" name="result" id="result" rows="5" required="true"></textarea>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary btn-round">Visualize</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer content -->
+  <footer class="footer mt-auto py-3">
+    <div class="container">
+      <span class="text-muted">Place sticky footer content here.</span>
+    </div>
+  </footer>
+</body>
+
+</html>
