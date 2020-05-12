@@ -1,1 +1,1 @@
-# snowflake-structure-visualization
+# Snowflake Inspector
