@@ -8,16 +8,21 @@
 </head>
 
 <body class="d-flex flex-column h-100">
-  <header class="navbar navbar-expand navbar-dark fixed-top bg-dark content-justify-center">
+  <header class="navbar navbar-expand-med navbar-dark fixed-top bg-dark">
     <a class="navbar-brand" href="#">
       <img src="../img/hashmap_banner_white.png" width="200px" />
     </a>
 
-    <div class="mx-auto text-white">
-     <h1>Snowflake Inspector</h1>
-    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
 
-    <div class="navbar-nav">
+      <div class="mx-auto my-2 text-white">
+        <h1>Snowflake Inspector</h1>
+      </div>
+
       <ul class="navbar-nav">
         <li class="nav-item">
           <a class="nav-link" href="#">Contact Us</a>
@@ -26,7 +31,7 @@
           <a class="nav-link" href="#">Feedback </a>
         </li>
         <li class="nav-item">
-          <button class="nav-item btn btn-primary ml-5">New Visualization</button>
+          <button class="nav-item btn btn-primary ml-3">New Visualization</button>
         </li>
       </ul>
     </div>
