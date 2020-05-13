@@ -4,20 +4,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const dist_path = path.resolve(__dirname, 'dist');
 
-module.exports = {
-  mode: 'development',
-  devtool: 'inline-source-map',
-  devServer: {
-    contentBase: './dist',
-  },
-
+let config = {
   entry: './src/index.js',
-
   output: {
     filename: 'bundle.js',
     path: dist_path,
   },
-
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Snowflake Inspector by Hashmap',
@@ -26,13 +18,11 @@ module.exports = {
       path: dist_path,
       template: './src/html/index.html'
     }),
-
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery'
     })
   ],
-
   module: {
     rules: [
       {
@@ -60,4 +50,19 @@ module.exports = {
       },
     ]
   }
+};
+
+module.exports = (env, argv) => {
+  if (argv.mode === 'development') {
+    config.devtool = 'inline-source-map';
+    config.devServer = {
+      contentBase: './dist',
+    };
+  }
+
+  if (argv.mode === 'production') {
+    config.devtool = 'source-map';
+  }
+
+  return config;
 };
