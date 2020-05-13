@@ -1,3 +1,5 @@
+import {render} from './hierarchy_vis.js'
+
 
 $('form').submit(function (e) {
   e.preventDefault();

@@ -131,7 +131,7 @@ export function render(json) {
     nodes: nodes,
     edges: edges,
   };
-  
+
   // initialize network!
   let network = new Network(hierarchy_vis_div, data, options);
 
@@ -205,8 +205,8 @@ export function render(json) {
 
     oldClickedNodeIds = connectedNodes[0];
     oldClickedEdgeIds = connectedNodes[1];
-    //network.redraw();
   });
+
   window.onresize = function () {
     network.fit();
   };
