@@ -3,11 +3,36 @@ import {render} from './hierarchy_vis.js'
 import hierarchy_data_query from '../data/hierarchy_data_query.sql';
 
 // handle modal submit
-function on_new_hierarchy_submit(e) {
-  e.preventDefault();
+function on_new_hierarchy_submit() {
+  // remove old warnings
+  $("#invalid-hierarchy-query-results-warning").hide();
+  $("#empty-hierarchy-query-results-warning").hide();
+
+  // get query results
+  let query_results = $('textarea#hierarchy-data-input').val().trim();
+
+  // validate results
+  if (query_results === "") {
+    $("#empty-hierarchy-query-results-warning").show();
+    return;
+  }
+
+  // parse the text into a hierarchy array
+  if (query_results.startsWith("GRANTS")) {
+    index = query_results.indexOf('[');
+    query_results = query_results.substring(index);
+  } else if (!query_results.startsWith('[')) {
+    $("#invalid-hierarchy-query-results-warning").show();
+    return;
+  }
+
+  // plot the hierarchy
   $('#create-hierarchy-vis-modal').modal('toggle');
-  let text = $('textarea#hierarchy-data-input').val();
-  render(JSON.parse(text));
+  try {
+    render(JSON.parse(query_results));
+  } catch (error) {
+    alert("Whoops! We couldn't parse your results. Please double check your query and try again. Please submit feedback if you believe this is a bug.");
+  }
 }
 
 // handle copy button select

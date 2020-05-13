@@ -32,7 +32,8 @@
           <a class="nav-link" href="#">Feedback </a>
         </li>
         <li class="nav-item">
-          <button class="nav-item btn btn-primary ml-3" data-toggle="modal" data-target="#create-hierarchy-vis-modal">New Visualization</button>
+          <button class="nav-item btn btn-primary ml-3" data-toggle="modal"
+            data-target="#create-hierarchy-vis-modal">New Visualization</button>
         </li>
       </ul>
     </div>
@@ -46,7 +47,7 @@
   </main>
 
   <!-- Modal -->
-  <div class="modal fade" id="create-hierarchy-vis-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal fade" id="create-hierarchy-vis-modal" tabindex="-1" role="dialog" aria-hidden="false">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -57,23 +58,35 @@
         </div>
         <div class="modal-body">
           <div class="queryStyle">
-              <pre>
+            <pre>
                 <code id='hierarchy-data-query'> 
                 </code>
             </pre>
           </div>
-            <button type="button" class="btn btn-secondary btn-round write-btn ml-auto" id="copy-hierarchy-query-button">Copy to clipboard</button>
+          <div width="100%" class="text-center">
+            <button type="button" class="btn btn-secondary btn-round write-btn mt-3 ml-auto"
+              id="copy-hierarchy-query-button">Copy to clipboard</button>
+          </div>
           <div class="mt-4">
-            <form>
               <div class="form-group">
                 <label>Paste the query output here</label>
-                <textarea class="form-control" name="result" id="hierarchy-data-input" rows="5" required="true"></textarea>
+                <textarea class="form-control" name="result" id="hierarchy-data-input" rows="5"
+                  required="true"></textarea>
               </div>
+              
+              <div class="alert alert-warning" role="alert" id="empty-hierarchy-query-results-warning">
+                Paste your query output above!
+              </div>
+              
+              <div class="alert alert-danger" role="alert" id="invalid-hierarchy-query-results-warning">
+                Invalid query output provided. Please double check the query and try again.
+              </div>
+
               <div class="modal-footer">
                 <button class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
-                <button class="btn btn-primary btn-round" id="visualize-new-hierarchy-button">Visualize</button>
+                <button class="btn btn-primary btn-round"
+                  id="visualize-new-hierarchy-button">Visualize</button>
               </div>
-            </form>
           </div>
         </div>
       </div>
