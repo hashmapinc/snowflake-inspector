@@ -35,7 +35,6 @@ const options = {
       opacity: 1,
     },
   },
-  width: '1800px',
 };
 
 // create state arrays for click handling
