@@ -19,7 +19,7 @@ function on_new_hierarchy_submit() {
 
   // parse the text into a hierarchy array
   if (query_results.startsWith("GRANTS")) {
-    index = query_results.indexOf('[');
+    const index = query_results.indexOf('[');
     query_results = query_results.substring(index);
   } else if (!query_results.startsWith('[')) {
     $("#invalid-hierarchy-query-results-warning").show();
