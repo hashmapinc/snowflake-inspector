@@ -18,17 +18,7 @@ jobs:
           # Must be relative path from root
           paths:
             - dist
-  deploy_to_s3:
-    executor:
-      name: node/default
-    steps:
-      - attach_workspace:
-          at: my_workspace
-      - run: ls snowflake-inspector/dist
 workflows:
   build_and_deploy:
     jobs:
       - build
-      - deploy_to_s3:
-          requires:
-            - build
