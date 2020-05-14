@@ -1,5 +1,5 @@
 # Snowflake Inspector
-Welcome to the Snowflake Inspector project!
+Welcome to the Snowflake Inspector project! 
 
 You can access a live version of the tool at http://snowflakeinspector.com
 
