@@ -24,8 +24,8 @@ jobs:
       name: node/default
     steps:
       - attach_workspace:
-          at: dist
-      - run: ls dist
+          at: /tmp/workspace
+      - run: ls /tmp/workspace/dist
 workflows:
   build_and_deploy:
     jobs:
