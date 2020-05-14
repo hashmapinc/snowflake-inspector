@@ -1,3 +1,5 @@
+![CircleCI](https://img.shields.io/circleci/build/github/hashmapinc/snowflake-inspector/master?label=CircleCI%20Master%20Build)
+
 # Snowflake Inspector
 Welcome to the Snowflake Inspector project! 
 
