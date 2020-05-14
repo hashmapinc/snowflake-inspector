@@ -9,7 +9,7 @@ jobs:
     executor:
       name: node/default
     steps:
-      - checkout:
+      - checkout
       - node/with-cache:
           steps:
             - run: npm install
