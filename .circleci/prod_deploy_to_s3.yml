@@ -1,0 +1,34 @@
+version: 2
+orbs:
+  node: circleci/node@1.1.6
+jobs:
+  build:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - run: cd snowflake-inspector
+      - node/with-cache:
+          steps:
+            - run: npm install
+      - run: npx webpack --mode=production
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory
+          root: snowflake-inspector
+          # Must be relative path from root
+          paths:
+            - dist
+  deploy_to_s3:
+    executor:
+      name: node/default
+    steps:
+      - attach_workspace:
+          at: my_workspace
+      - run: ls snowflake-inspector/dist
+workflows:
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy_to_s3:
+          requires:
+            - build
