@@ -3,17 +3,19 @@ orbs:
   node: circleci/node@1.1.6
 jobs:
   build:
+    working_directory: ~/snowflake-inspector/snowflake-inspector
     executor:
       name: node/default
     steps:
-      - checkout
+      - checkout:
+          path: ~/snowflake-inspector
       - node/with-cache:
           steps:
-            - run: cd snowflake-inspector && npm install
-      - run: cd snowflake-inspector && npx webpack --mode=production
+            - run: npm install
+      - run: npx webpack --mode=production
       - persist_to_workspace:
           # Must be an absolute path, or relative path from working_directory
-          root: snowflake-inspector
+          root: ~/snowflake-inspector/snowflake-inspector
           # Must be relative path from root
           paths:
             - dist
