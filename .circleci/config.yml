@@ -6,19 +6,16 @@ orbs:
 
 jobs:
   build:
-    working_directory: ~/snowflake-inspector/snowflake-inspector
     executor:
       name: node/default
     steps:
-      - checkout:
-          path: ~/snowflake-inspector
+      - checkout
       - node/with-cache:
           steps:
             - run: npm install
       - run: npx webpack --mode=production
       - persist_to_workspace:
-          # Must be an absolute path, or relative path from working_directory
-          root: ~/snowflake-inspector/snowflake-inspector
+          root: .
           # Must be relative path from root
           paths:
             - dist
@@ -31,7 +28,7 @@ jobs:
       - aws_s3/sync:
           from: /tmp/workspace/dist
           overwrite: true
-          to: "s3://snowflakeinspector.com"
+          to: "s3://snowflakeinspector.hashmapinc.com"
 
 workflows:
   build_and_deploy:
