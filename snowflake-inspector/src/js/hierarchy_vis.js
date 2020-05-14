@@ -1,5 +1,6 @@
-import { Network } from "vis-network/peer/esm/vis-network";
-import { DataSet } from "vis-data/peer/esm/vis-data"
+import { Network } from 'vis-network/peer/esm/vis-network';
+import { DataSet } from 'vis-data/peer/esm/vis-data';
+import colors from './colors';
 
 // get vis div
 const hierarchy_vis_div = document.getElementById('hierarchy-vis');
@@ -9,7 +10,7 @@ const options = {
   nodes: {
     shadow: {
       enabled: true,
-      color: 'rgba(0,0,0,0.5)',
+      color: colors.lightGray,
       size: 10,
       x: 5,
       y: 5,
@@ -28,8 +29,8 @@ const options = {
   },
   edges: {
     color: {
-      color: 'rgb(211, 211, 211, 0.1)',
-      highlight: 'blue',
+      color: colors.lightGrayOpacity,
+      highlight: colors.lightBlue,
       hover: 'rgb(35, 120, 249, 1)',
       inherit: 'from',
       opacity: 1,
@@ -210,4 +211,4 @@ export function render(json) {
   window.onresize = function () {
     network.fit();
   };
-};
+}
