@@ -18,8 +18,18 @@ jobs:
           root: ~/snowflake-inspector/snowflake-inspector
           # Must be relative path from root
           paths:
-            - dist
+            - dist      
+  deploy:
+    executor:
+      name: node/default
+    steps:
+      - attach_workspace:
+          at: dist
+      - run: ls dist
 workflows:
   build_and_deploy:
     jobs:
       - build
+      - deploy:
+          requires:
+              - build
