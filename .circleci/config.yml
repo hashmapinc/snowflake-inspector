@@ -28,7 +28,6 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - run: ls /tmp/workspace/dist
       - aws_s3/sync:
           from: /tmp/workspace/dist
           overwrite: true
@@ -40,5 +39,8 @@ workflows:
       - build
       - deploy:
           context: snowflakeinspector.com # this context stores all envs for this job
+          filters:
+            branches:
+              only: master
           requires:
             - build
