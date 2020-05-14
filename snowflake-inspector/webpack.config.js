@@ -52,6 +52,7 @@ module.exports = (env, argv) => {
       contentBase: './dist',
       hot: true,
       port: 9000,
+      openPage: 'bundle.html',
     };
   }
 
