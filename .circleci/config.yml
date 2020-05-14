@@ -21,10 +21,13 @@ jobs:
           root: ~/snowflake-inspector/snowflake-inspector
           # Must be relative path from root
           paths:
-            - dist      
+            - dist
   deploy:
-    docker: 
-      - image: cimg/base:2020.01
+    docker:
+      - image: 'cimg/python:3.6'
+    filters:
+      branches:
+        only: /master
     steps:
       - attach_workspace:
           at: /tmp/workspace
@@ -32,7 +35,7 @@ jobs:
       - aws_s3/sync:
           from: /tmp/workspace/dist
           overwrite: true
-          to: 's3://snowflakeinspector.com'
+          to: "s3://snowflakeinspector.com"
 
 workflows:
   build_and_deploy:
@@ -40,4 +43,4 @@ workflows:
       - build
       - deploy:
           requires:
-              - build
+            - build
