@@ -15,6 +15,7 @@ jobs:
             - run: npm install
       - run: npx webpack --mode=production
       - persist_to_workspace:
+          root: .
           # Must be relative path from root
           paths:
             - dist
