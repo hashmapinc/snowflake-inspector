@@ -7,11 +7,10 @@ jobs:
       name: node/default
     steps:
       - checkout
-      - run: cd snowflake-inspector
       - node/with-cache:
           steps:
-            - run: npm install
-      - run: npx webpack --mode=production
+            - run: cd snowflake-inspector && npm install
+      - run: cd snowflake-inspector && npx webpack --mode=production
       - persist_to_workspace:
           # Must be an absolute path, or relative path from working_directory
           root: snowflake-inspector
