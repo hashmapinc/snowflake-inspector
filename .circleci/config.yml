@@ -23,6 +23,7 @@ jobs:
           paths:
             - dist
   deploy:
+    context: snowflakeinspector.com # this context stores all envs for this job
     docker:
       - image: 'cimg/python:3.6'
     steps:
