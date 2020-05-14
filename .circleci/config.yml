@@ -36,8 +36,5 @@ workflows:
       - build
       - deploy:
           context: snowflakeinspector.com # this context stores all envs for this job
-          filters:
-            branches:
-              only: master
           requires:
             - build
