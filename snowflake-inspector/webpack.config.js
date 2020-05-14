@@ -22,6 +22,9 @@ let config = {
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery'
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'bundle.css'
     })
   ],
   module: {
