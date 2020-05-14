@@ -23,8 +23,8 @@ jobs:
           paths:
             - dist      
   deploy:
-    executor:
-      name: aws_s3/default
+    docker: 
+      - image: cimg/base:2020.01
     steps:
       - attach_workspace:
           at: /tmp/workspace
