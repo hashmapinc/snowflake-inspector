@@ -1,6 +1,9 @@
 version: 2.1
+
 orbs:
   node: circleci/node@1.1.6
+  aws_s3: circleci/aws-s3@1.0.15
+
 jobs:
   build:
     working_directory: ~/snowflake-inspector/snowflake-inspector
@@ -21,11 +24,16 @@ jobs:
             - dist      
   deploy:
     executor:
-      name: node/default
+      name: aws_s3/default
     steps:
       - attach_workspace:
           at: /tmp/workspace
       - run: ls /tmp/workspace/dist
+      - aws-s3/sync:
+          from: /tmp/workspace/dist
+          overwrite: true
+          to: 's3://snowflakeinspector.com'
+
 workflows:
   build_and_deploy:
     jobs:
