@@ -17,15 +17,15 @@ let config = {
       hash: true,
       filename: 'bundle.html',
       path: dist_path,
-      template: './src/html/index.html'
+      template: './src/html/index.html',
     }),
     new webpack.ProvidePlugin({
       $: 'jquery',
-      jQuery: 'jquery'
+      jQuery: 'jquery',
     }),
     new MiniCssExtractPlugin({
-      filename: 'bundle.css'
-    })
+      filename: 'bundle.css',
+    }),
   ],
   module: {
     rules: [
@@ -35,25 +35,18 @@ let config = {
       },
       {
         test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader'
-        ]
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: [
-          'file-loader',
-        ]
+        use: ['file-loader'],
       },
       {
         test: /\.sql$/,
-        use: [
-          'raw-loader',
-        ]
+        use: ['raw-loader'],
       },
-    ]
-  }
+    ],
+  },
 };
 
 module.exports = (env, argv) => {
@@ -61,6 +54,9 @@ module.exports = (env, argv) => {
     config.devtool = 'inline-source-map';
     config.devServer = {
       contentBase: './dist',
+      hot: true,
+      port: 9000,
+      openPage: 'bundle.html',
     };
   }
 

@@ -1,5 +1,6 @@
-import { Network } from "vis-network/peer/esm/vis-network";
-import { DataSet } from "vis-data/peer/esm/vis-data"
+import { Network } from 'vis-network/peer/esm/vis-network';
+import { DataSet } from 'vis-data/peer/esm/vis-data';
+import { colors } from './constants';
 
 // get vis div
 const hierarchy_vis_div = document.getElementById('hierarchy-vis');
@@ -9,7 +10,7 @@ const options = {
   nodes: {
     shadow: {
       enabled: true,
-      color: 'rgba(0,0,0,0.5)',
+      color: colors.nodeShadow,
       size: 10,
       x: 5,
       y: 5,
@@ -28,9 +29,9 @@ const options = {
   },
   edges: {
     color: {
-      color: 'rgb(211, 211, 211, 0.1)',
-      highlight: 'blue',
-      hover: 'rgb(35, 120, 249, 1)',
+      color: colors.edge,
+      highlight: colors.edgeHighlight,
+      hover: colors.hover,
       inherit: 'from',
       opacity: 1,
     },
@@ -44,9 +45,9 @@ let oldClickedEdgeIds = [];
 const getColor = function (type) {
   let color;
   if (type === 'ROLE') {
-    color = 'rgb(255, 232, 232, 1)';
+    color = colors.roleNode;
   } else if (type === 'USER') {
-    color = 'rgb(189, 243, 227, 1)';
+    color = colors.userNode;
   }
   return color;
 };
@@ -65,15 +66,15 @@ export function render(json) {
           label: element.GRANTED_TO_NAME,
           shape: 'box',
           color: {
-            border: 'rgb(211, 211, 211, 1)',
+            border: colors.nodeBorder,
             background: getColor(element.GRANTED_TO_TYPE),
             highlight: {
-              border: 'rgb(211, 211, 211, 1)',
-              background: 'yellow',
+              border: colors.hoverBorder,
+              background: colors.highlight,
             },
             hover: {
-              border: '#2B7CE9',
-              background: 'lightblue',
+              border: colors.hoverBorder,
+              background: colors.hover,
             },
           },
           widthConstraint: { maximum: 150 },
@@ -88,15 +89,15 @@ export function render(json) {
           label: element.OBJECT_NAME,
           shape: 'box',
           color: {
-            border: 'rgb(211, 211, 211, 1)',
+            border: colors.nodeBorder,
             background: getColor(element.SNOWFLAKE_OBJECT_TYPE),
             highlight: {
-              border: '#2B7CE9',
-              background: 'yellow',
+              border: colors.peach,
+              background: colors.highlight,
             },
             hover: {
-              border: '#2B7CE9',
-              background: 'lightblue',
+              border: colors.hoverBorder,
+              background: colors.hover,
             },
           },
           widthConstraint: { maximum: 150 },
@@ -143,7 +144,7 @@ export function render(json) {
       });
 
       directedEdges.map((edge) => {
-        edge.color = 'blue';
+        edge.color = colors.hoverBorder;
       });
       directedEdges.forEach((edge) => {
         edgeArray.push(edge);
@@ -158,7 +159,10 @@ export function render(json) {
             nodeArray.push(child);
             nodes.update({
               id: child,
-              color: { background: 'rgb(113, 167, 247, 1)' },
+              color: {
+                background: colors.selectedBackground,
+                border: colors.selectedBorder,
+              },
             });
             getLinkedNodes(child, nodeArray, edgeArray);
           }
@@ -174,15 +178,15 @@ export function render(json) {
       let oldNodes = nodes.get(oldClickedNodeIds);
       oldNodes.forEach((node) => {
         node.color = {
-          border: 'rgb(211, 211, 211, 1)',
+          border: colors.nodeBorder,
           background: node.initialColor,
           highlight: {
-            border: '#2B7CE9',
-            background: 'yellow',
+            border: colors.hoverBorder,
+            background: colors.highlight,
           },
           hover: {
-            border: '#2B7CE9',
-            background: 'lightblue',
+            border: colors.hoverBorder,
+            background: colors.hover,
           },
         };
       });
@@ -191,11 +195,11 @@ export function render(json) {
     if (oldClickedEdgeIds.length > 0) {
       oldClickedEdgeIds.forEach((edge) => {
         edge.color = {
-          color: 'rgb(211, 211, 211, 0.1)',
-          highlight: 'blue',
-          hover: 'blue',
+          color: colors.edge,
+          highlight: colors.edgeHighlight,
+          hover: colors.hover,
           inherit: 'from',
-          opacity: 0.5,
+          opacity: 1,
         };
       });
       edges.update(oldClickedEdgeIds);
@@ -210,4 +214,4 @@ export function render(json) {
   window.onresize = function () {
     network.fit();
   };
-};
+}
