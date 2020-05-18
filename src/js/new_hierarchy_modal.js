@@ -37,8 +37,9 @@ function on_new_hierarchy_submit() {
 
 // handle copy button select
 function on_copy_hierarchy_query_click() {
-  // Write the query to the clipboard
-  navigator.clipboard.writeText(hierarchy_data_query)
+  // Select the query element and copy it's contents
+  $("#hierarchy-data-query").select();
+  document.execCommand("copy");
 
   // change the copy button text to show the copy happened
   $("#copy-hierarchy-query-button").text('Copied!')

@@ -18,10 +18,7 @@
 }
 
 .queryStyle {
-  height: 300px;     
-  overflow: -moz-scrollbars-vertical;          
-  overflow-y: scroll;
-  border: 1px; 
-  background-color: rgb(211,211,211, 0.3); 
-  border-radius: 5px;
+  font-family: 'Courier New', Courier, monospace !important;
+  background-color: white !important;
+  color: black !important;
 }
