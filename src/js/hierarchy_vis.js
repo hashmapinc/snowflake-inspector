@@ -56,7 +56,7 @@ export function render(json) {
   let nodes = new DataSet([]);
   json.forEach((element) => {
     if (
-      element.SNOWFLAKE_OBJECT_TYPE === 'ROLE' &&
+      element.GRANTED_ON_TYPE === 'ROLE' &&
       element.GRANTED_TO_NAME !== 'SECURITYADMIN' &&
       element.PRIVILEGE !== 'OWNERSHIP'
     ) {
@@ -82,15 +82,16 @@ export function render(json) {
         });
       } catch (error) {
         //errors if there are duplicate items
+        console.log("Encountered error: " + error);
       }
       try {
         nodes.add({
-          id: element.OBJECT_NAME,
-          label: element.OBJECT_NAME,
+          id: element.GRANTED_ON_NAME,
+          label: element.GRANTED_ON_NAME,
           shape: 'box',
           color: {
             border: colors.nodeBorder,
-            background: getColor(element.SNOWFLAKE_OBJECT_TYPE),
+            background: getColor(element.GRANTED_ON_TYPE),
             highlight: {
               border: colors.peach,
               background: colors.highlight,
@@ -101,10 +102,11 @@ export function render(json) {
             },
           },
           widthConstraint: { maximum: 150 },
-          initialColor: getColor(element.SNOWFLAKE_OBJECT_TYPE),
+          initialColor: getColor(element.GRANTED_ON_TYPE),
         });
       } catch (error) {
         //errors if there are duplicate items
+        console.log("Encountered error: " + error);
       }
     }
   });
@@ -119,7 +121,7 @@ export function render(json) {
     ) {
       x.push({
         from: element.GRANTED_TO_NAME,
-        to: element.OBJECT_NAME,
+        to: element.GRANTED_ON_NAME,
         arrows: 'to',
       });
     }
