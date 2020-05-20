@@ -21,19 +21,22 @@ const colorMap = {
   lightgreen: '#98df8a',
   peach: '#ffbb78',
   lightBlue: '#aec7e8',
-  beige: 'ffffb3',
 };
 
 export const colors = {
   roleNode: colorMap.lightBlue,
   userNode: colorMap.lightgreen,
   edge: colorMap.lightGrayOpacity,
-  selectedBackground: colorMap.lightBrown,
-  selectedBorder: colorMap.peach,
+  parentEdge: colorMap.purple,
+  childEdge: colorMap.brown,
+  childSelectedBackground: colorMap.lightBrown,
+  parentSelectedBackground: colorMap.purple,
+  childSelectedBorder: colorMap.peach,
+  parentSelectedBorder: colorMap.peach,
   hover: colorMap.lightBrown,
   hoverBorder: colorMap.peach,
   highlight: colorMap.yellow,
-  edgeHighlight: colorMap.peach,
+  edgeHighlight: colorMap.brown,
   nodeShadow: colorMap.lightGray,
   nodeBorder: colorMap.lightGrayBorder,
 };
