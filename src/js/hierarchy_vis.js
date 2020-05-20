@@ -115,10 +115,7 @@ export function render(json) {
   let x = [];
 
   json.forEach((element) => {
-    if (
-      element.GRANTED_TO_NAME !== 'SECURITYADMIN' &&
-      element.PRIVILEGE !== 'OWNERSHIP'
-    ) {
+    if (element.GRANTED_TO_NAME !== 'SECURITYADMIN' && element.PRIVILEGE !== 'OWNERSHIP') {
       x.push({
         from: element.GRANTED_TO_NAME,
         to: element.GRANTED_ON_NAME,
@@ -138,12 +135,24 @@ export function render(json) {
   // initialize network!
   let network = new Network(hierarchy_vis_div, data, options);
 
-  let getLinkedNodes = (
-    nodeId,
-    nodeArray = [],
-    edgeArray = [],
-    direction = null
-  ) => {
+  let getLinkedNodes = (nodeId, nodeArray = [], edgeArray = [], direction = null) => {
+    const selectNodesRecursively = (connectedNodes, direction, background, border) => {
+      if (connectedNodes) {
+        connectedNodes.forEach((child) => {
+          if (nodeArray.indexOf(child) === -1) {
+            nodeArray.push(child);
+            nodes.update({
+              id: child,
+              color: {
+                background: background,
+                border: border,
+              },
+            });
+            getLinkedNodes(child, nodeArray, edgeArray, direction);
+          }
+        });
+      }
+    };
     if (nodeId) {
       let connectedEdges = network.getConnectedEdges(nodeId);
       let childEdges, parentEdges;
@@ -160,14 +169,23 @@ export function render(json) {
           },
           [[], []]
         );
-      } else if (direction === 'child') {
-        childEdges = edges.get(childEdges).filter((edge) => {
-          return edge.from === nodeId;
-        });
+
+        let parentNodes = network.getConnectedNodes(nodeId, 'from');
+        let childNodes = network.getConnectedNodes(nodeId, 'to');
+        selectNodesRecursively(parentNodes, 'parent', colors.parentSelectedBackground, colors.parentSelectedBorder);
+        selectNodesRecursively(childNodes, 'child', colors.childSelectedBackground, colors.childSelectedBorder);
       } else if (direction === 'parent') {
         parentEdges = edges.get(childEdges).filter((edge) => {
           return edge.to === nodeId;
         });
+        let parentNodes = network.getConnectedNodes(nodeId, 'from');
+        selectNodesRecursively(parentNodes, 'parent', colors.parentSelectedBackground, colors.parentSelectedBorder);
+      } else if (direction === 'child') {
+        childEdges = edges.get(childEdges).filter((edge) => {
+          return edge.from === nodeId;
+        });
+        let childNodes = network.getConnectedNodes(nodeId, 'to');
+        selectNodesRecursively(childNodes, 'child', colors.childSelectedBackground, colors.childSelectedBorder);
       }
 
       if (parentEdges && parentEdges.length > 0) {
@@ -183,61 +201,6 @@ export function render(json) {
           edgeArray.push(edge);
         });
         edges.update(childEdges);
-      }
-
-      const selectNodesRecursively = (
-        connectedNodes,
-        direction,
-        background,
-        border
-      ) => {
-        if (connectedNodes) {
-          connectedNodes.forEach((child) => {
-            if (nodeArray.indexOf(child) === -1) {
-              nodeArray.push(child);
-              nodes.update({
-                id: child,
-                color: {
-                  background: background,
-                  border: border,
-                },
-              });
-              getLinkedNodes(child, nodeArray, edgeArray, direction);
-            }
-          });
-        }
-      };
-      if (direction === null) {
-        let parentNodes = network.getConnectedNodes(nodeId, 'from');
-        let childNodes = network.getConnectedNodes(nodeId, 'to');
-        selectNodesRecursively(
-          parentNodes,
-          'parent',
-          colors.parentSelectedBackground,
-          colors.parentSelectedBorder
-        );
-        selectNodesRecursively(
-          childNodes,
-          'child',
-          colors.childSelectedBackground,
-          colors.childSelectedBorder
-        );
-      } else if (direction === 'parent') {
-        let parentNodes = network.getConnectedNodes(nodeId, 'from');
-        selectNodesRecursively(
-          parentNodes,
-          'parent',
-          colors.parentSelectedBackground,
-          colors.parentSelectedBorder
-        );
-      } else if (direction === 'child') {
-        let childNodes = network.getConnectedNodes(nodeId, 'to');
-        selectNodesRecursively(
-          childNodes,
-          'child',
-          colors.childSelectedBackground,
-          colors.childSelectedBorder
-        );
       }
     }
     return [nodeArray, edgeArray];
