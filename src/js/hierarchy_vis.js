@@ -82,7 +82,7 @@ export function render(json) {
         });
       } catch (error) {
         //errors if there are duplicate items
-        console.log("Encountered error: " + error);
+        console.log('Encountered error: ' + error);
       }
       try {
         nodes.add({
@@ -106,7 +106,7 @@ export function render(json) {
         });
       } catch (error) {
         //errors if there are duplicate items
-        console.log("Encountered error: " + error);
+        console.log('Encountered error: ' + error);
       }
     }
   });
@@ -138,37 +138,106 @@ export function render(json) {
   // initialize network!
   let network = new Network(hierarchy_vis_div, data, options);
 
-  let getLinkedNodes = function (nodeId, nodeArray, edgeArray) {
+  let getLinkedNodes = (
+    nodeId,
+    nodeArray = [],
+    edgeArray = [],
+    direction = null
+  ) => {
     if (nodeId) {
-      let childEdges = network.getConnectedEdges(nodeId);
-      let directedEdges = edges.get(childEdges).filter((edge) => {
-        return edge.from === nodeId;
-      });
-
-      directedEdges.map((edge) => {
-        edge.color = colors.hoverBorder;
-      });
-      directedEdges.forEach((edge) => {
-        edgeArray.push(edge);
-      });
-
-      edges.update(directedEdges);
-
-      let childNodes = network.getConnectedNodes(nodeId, 'to');
-      if (childNodes) {
-        childNodes.forEach((child) => {
-          if (nodeArray.indexOf(child) === -1) {
-            nodeArray.push(child);
-            nodes.update({
-              id: child,
-              color: {
-                background: colors.selectedBackground,
-                border: colors.selectedBorder,
-              },
-            });
-            getLinkedNodes(child, nodeArray, edgeArray);
-          }
+      let connectedEdges = network.getConnectedEdges(nodeId);
+      let childEdges, parentEdges;
+      if (direction === null) {
+        [childEdges, parentEdges] = edges.get(connectedEdges).reduce(
+          ([a, b], edge) => {
+            if (edge.from === nodeId) {
+              a.push(edge);
+            }
+            if (edge.to === nodeId) {
+              b.push(edge);
+            }
+            return [a, b];
+          },
+          [[], []]
+        );
+      } else if (direction === 'child') {
+        childEdges = edges.get(childEdges).filter((edge) => {
+          return edge.from === nodeId;
         });
+      } else if (direction === 'parent') {
+        parentEdges = edges.get(childEdges).filter((edge) => {
+          return edge.to === nodeId;
+        });
+      }
+
+      if (parentEdges && parentEdges.length > 0) {
+        parentEdges.map((edge) => {
+          edge.color = colors.parentEdge;
+          edgeArray.push(edge);
+        });
+        edges.update(parentEdges);
+      }
+      if (childEdges && childEdges.length > 0) {
+        childEdges.map((edge) => {
+          edge.color = colors.childEdge;
+          edgeArray.push(edge);
+        });
+        edges.update(childEdges);
+      }
+
+      const selectNodesRecursively = (
+        connectedNodes,
+        direction,
+        background,
+        border
+      ) => {
+        if (connectedNodes) {
+          connectedNodes.forEach((child) => {
+            if (nodeArray.indexOf(child) === -1) {
+              nodeArray.push(child);
+              nodes.update({
+                id: child,
+                color: {
+                  background: background,
+                  border: border,
+                },
+              });
+              getLinkedNodes(child, nodeArray, edgeArray, direction);
+            }
+          });
+        }
+      };
+      if (direction === null) {
+        let parentNodes = network.getConnectedNodes(nodeId, 'from');
+        let childNodes = network.getConnectedNodes(nodeId, 'to');
+        selectNodesRecursively(
+          parentNodes,
+          'parent',
+          colors.parentSelectedBackground,
+          colors.parentSelectedBorder
+        );
+        selectNodesRecursively(
+          childNodes,
+          'child',
+          colors.childSelectedBackground,
+          colors.childSelectedBorder
+        );
+      } else if (direction === 'parent') {
+        let parentNodes = network.getConnectedNodes(nodeId, 'from');
+        selectNodesRecursively(
+          parentNodes,
+          'parent',
+          colors.parentSelectedBackground,
+          colors.parentSelectedBorder
+        );
+      } else if (direction === 'child') {
+        let childNodes = network.getConnectedNodes(nodeId, 'to');
+        selectNodesRecursively(
+          childNodes,
+          'child',
+          colors.childSelectedBackground,
+          colors.childSelectedBorder
+        );
       }
     }
     return [nodeArray, edgeArray];
@@ -207,7 +276,7 @@ export function render(json) {
       edges.update(oldClickedEdgeIds);
     }
     const clickedId = properties.nodes[0];
-    const connectedNodes = getLinkedNodes(clickedId, [], []);
+    const connectedNodes = getLinkedNodes(clickedId);
 
     oldClickedNodeIds = connectedNodes[0];
     oldClickedEdgeIds = connectedNodes[1];
