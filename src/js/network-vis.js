@@ -56,12 +56,13 @@ const getColor = function (type) {
 };
 
 export function render(json) {
-  let nodes = new DataSet([]);
-  let hierarchy = [];
-  let database = {};
-  let schema = {};
-  let category = {};
-  let item = {};
+  let nodes = new DataSet([]),
+    hierarchy = [],
+    database = {},
+    schema = {},
+    category = {},
+    item = {},
+    other = {};
   json.forEach((element) => {
     if (
       element.GRANTED_ON_TYPE === 'ROLE' &&
@@ -139,9 +140,23 @@ export function render(json) {
         schemaIndex === -1 ? database.children.push(schema) : (database.children[schemaIndex] = schema);
       }
       index === -1 ? hierarchy.push(database) : (hierarchy[index] = database);
+    } else {
+      let otherIndex = hierarchy.findIndex(
+        (other) => other.text === '(' + element.GRANTED_ON_TYPE + ')' + element.GRANTED_ON_NAME
+      );
+      other =
+        otherIndex !== -1
+          ? hierarchy[otherIndex]
+          : {
+              text: '(' + element.GRANTED_ON_TYPE + ')' + element.GRANTED_ON_NAME,
+              type: element.GRANTED_ON_TYPE,
+              children: [],
+            };
+
+      otherIndex === -1 ? hierarchy.push(other) : (hierarchy[otherIndex] = other);
     }
   });
-
+  hierarchy.sort((a, b) => (a.text > b.text ? -1 : 1));
   renderHierarchy(hierarchy);
   // create an array with edges
   let x = [];
