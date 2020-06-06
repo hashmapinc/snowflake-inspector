@@ -1,9 +1,12 @@
 import { Network } from 'vis-network/peer/esm/vis-network';
 import { DataSet } from 'vis-data/peer/esm/vis-data';
 import { colors } from './constants';
+import 'jstree/dist/themes/default/style.css';
+import jstree from 'jstree';
+import renderHierarchy from './hierarchy-vis';
 
 // get vis div
-const hierarchy_vis_div = document.getElementById('hierarchy-vis');
+const hierarchy_vis_div = document.getElementById('network-vis');
 
 // set vis options
 const options = {
@@ -54,6 +57,11 @@ const getColor = function (type) {
 
 export function render(json) {
   let nodes = new DataSet([]);
+  let hierarchy = [];
+  let database = {};
+  let schema = {};
+  let category = {};
+  let item = {};
   json.forEach((element) => {
     if (
       element.GRANTED_ON_TYPE === 'ROLE' &&
@@ -108,9 +116,33 @@ export function render(json) {
         //errors if there are duplicate items
         console.log('Encountered error: ' + error);
       }
+    } else if (element.GRANTED_ON_DATABASE) {
+      const index = hierarchy.findIndex((db) => db.text === element.GRANTED_ON_DATABASE);
+      database = index !== -1 ? hierarchy[index] : { text: element.GRANTED_ON_DATABASE, children: [] };
+
+      if (element.GRANTED_ON_SCHEMA) {
+        let schemaIndex = database.children.findIndex((schema) => schema.text === element.GRANTED_ON_SCHEMA);
+        schema =
+          schemaIndex !== -1 ? database.children[schemaIndex] : { text: element.GRANTED_ON_SCHEMA, children: [] };
+
+        if (element.GRANTED_ON_TYPE && element.GRANTED_ON_TYPE !== 'SCHEMA') {
+          let categoryIndex = schema.children.findIndex((category) => category.text === element.GRANTED_ON_TYPE);
+          category =
+            categoryIndex !== -1 ? schema.children[categoryIndex] : { text: element.GRANTED_ON_TYPE, children: [] };
+          categoryIndex === -1 ? schema.children.push(category) : (schema.children[categoryIndex] = category);
+
+          let itemIndex = category.children.findIndex((item) => item.text === element.GRANTED_ON_NAME);
+          item = itemIndex !== -1 ? category.children[itemIndex] : { text: element.GRANTED_ON_NAME, children: [] };
+          itemIndex === -1 ? category.children.push(item) : (category.children[itemIndex] = item);
+        }
+
+        schemaIndex === -1 ? database.children.push(schema) : (database.children[schemaIndex] = schema);
+      }
+      index === -1 ? hierarchy.push(database) : (hierarchy[index] = database);
     }
   });
 
+  renderHierarchy(hierarchy);
   // create an array with edges
   let x = [];
 

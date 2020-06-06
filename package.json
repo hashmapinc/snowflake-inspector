@@ -19,6 +19,14 @@
     "url": "https://github.com/hashmapinc/snowflake-inspector/issues"
   },
   "homepage": "https://github.com/hashmapinc/snowflake-inspector#readme",
+  "dependencies": {
+    "bootstrap": "^4.5.0",
+    "jquery": "^3.5.1",
+    "popper.js": "^1.16.1",
+    "vis-data": "^6.5.1",
+    "vis-network": "^7.6.4",
+    "jstree": "^3.3.9"
+  },
   "devDependencies": {
     "css-loader": "^3.5.3",
     "file-loader": "^6.0.0",
@@ -29,12 +37,5 @@
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.11.0"
-  },
-  "dependencies": {
-    "bootstrap": "^4.5.0",
-    "jquery": "^3.5.1",
-    "popper.js": "^1.16.1",
-    "vis-data": "^6.5.1",
-    "vis-network": "^7.6.4"
   }
 }
