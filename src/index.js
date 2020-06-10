@@ -1,18 +1,16 @@
 'use strict';
 
-import sample_data from './data/sample_hierarchy_data.json';
+import sample_data from './data/sample-data.json';
+import * as app from './js/app';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/style.css';
 import 'bootstrap';
 
-import {render} from './js/hierarchy_vis.js';
-import init_modal from './js/new_hierarchy_modal.js';
-
+import initModal from './js/new-visualization-modal.js';
 
 // main
-document.addEventListener("DOMContentLoaded", function(){
-  init_modal();
-  
-  //load data
-  render(sample_data);
+document.addEventListener('DOMContentLoaded', function () {
+  initModal();
+  //load sample data
+  app.init(sample_data);
 });

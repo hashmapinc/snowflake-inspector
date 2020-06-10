@@ -23,7 +23,7 @@ const colorMap = {
   lightBlue: '#aec7e8',
 };
 
-export const colors = {
+export const COLORS = {
   roleNode: colorMap.lightBlue,
   userNode: colorMap.lightgreen,
   edge: colorMap.lightGrayOpacity,
