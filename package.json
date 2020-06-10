@@ -25,7 +25,8 @@
     "popper.js": "^1.16.1",
     "vis-data": "^6.5.1",
     "vis-network": "^7.6.4",
-    "jstree": "^3.3.9"
+    "jstree": "^3.3.9",
+    "bootstrap-icons": "^1.0.0-alpha4"
   },
   "devDependencies": {
     "css-loader": "^3.5.3",
