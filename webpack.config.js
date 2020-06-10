@@ -38,7 +38,7 @@ let config = {
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
-        test: /\.(png|svg|jpg|gif)$/,
+        test: /\.(ttf|eot|woff||woff2|otf|svg|png|jpg|gif|ico)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         use: ['file-loader'],
       },
       {

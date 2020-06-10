@@ -45,7 +45,13 @@ const buildData = (json) => {
       dbRoot = data.hierarchy[dbRootIndex];
 
       const dbIndex = dbRoot.children.findIndex((db) => db.text === element.GRANTED_ON_DATABASE);
-      database = dbIndex !== -1 ? dbRoot.children[dbIndex] : { text: element.GRANTED_ON_DATABASE, children: [] };
+      database =
+        dbIndex !== -1
+          ? dbRoot.children[dbIndex]
+          : {
+              text: element.GRANTED_ON_DATABASE,
+              children: [],
+            };
 
       if (element.GRANTED_ON_SCHEMA) {
         let schemaIndex = database.children.findIndex((schema) => schema.text === element.GRANTED_ON_SCHEMA);
