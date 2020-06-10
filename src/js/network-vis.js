@@ -45,7 +45,7 @@ const options = {
 let oldClickedNodeIds = [];
 let oldClickedEdgeIds = [];
 
-const getColor = function (type) {
+const getColor = (type) => {
   let color;
   if (type === 'ROLE') {
     color = COLORS.roleNode;
@@ -164,7 +164,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
   };
 
   //click handler
-  network.on('select', function (properties) {
+  network.on('select', (properties) => {
     if (oldClickedNodeIds.length > 0) {
       let oldNodes = nodes.get(oldClickedNodeIds);
       oldNodes.forEach((node) => {
@@ -202,7 +202,14 @@ const renderNetwork = (dataNodes, dataEdges) => {
     oldClickedEdgeIds = connectedNodes[1];
   });
 
-  window.onresize = function () {
+  network.on('hoverNode', (params) => {
+    network.canvas.body.container.style.cursor = 'pointer';
+  });
+  network.on('blurNode', (params) => {
+    network.canvas.body.container.style.cursor = 'default';
+  });
+
+  window.onresize = () => {
     network.fit();
   };
 };
