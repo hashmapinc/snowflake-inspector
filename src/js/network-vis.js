@@ -2,9 +2,7 @@ import { Network } from 'vis-network/peer/esm/vis-network';
 import { DataSet } from 'vis-data/peer/esm/vis-data';
 import { COLORS } from './constants';
 import 'jstree/dist/themes/default/style.css';
-import jstree from 'jstree';
-import renderHierarchy from './hierarchy-vis';
-
+import { onNodeClicked } from './app';
 // get vis div
 const networkVisDiv = document.getElementById('network-vis');
 
@@ -92,12 +90,16 @@ const renderNetwork = (dataNodes, dataEdges) => {
   // initialize network!
   let network = new Network(networkVisDiv, data, options);
 
-  let getLinkedNodes = (nodeId, nodeArray = [], edgeArray = [], direction = null) => {
+  let getLinkedNodes = (nodeId, nodeObj = { children: [], nodeArray: [] }, edgeArray = [], direction = null) => {
+    let allChildren = [];
     const selectNodesRecursively = (connectedNodes, direction, background, border) => {
       if (connectedNodes) {
         connectedNodes.forEach((child) => {
-          if (nodeArray.indexOf(child) === -1) {
-            nodeArray.push(child);
+          if (nodeObj.nodeArray.indexOf(child) === -1) {
+            nodeObj.nodeArray.push(child);
+            if (direction === 'child' && nodeObj.children.indexOf(child) === -1) {
+              nodeObj.children.push(child);
+            }
             nodes.update({
               id: child,
               color: {
@@ -105,14 +107,14 @@ const renderNetwork = (dataNodes, dataEdges) => {
                 border: border,
               },
             });
-            getLinkedNodes(child, nodeArray, edgeArray, direction);
+            getLinkedNodes(child, nodeObj, edgeArray, direction);
           }
         });
       }
     };
     if (nodeId) {
-      let connectedEdges = network.getConnectedEdges(nodeId);
       let childEdges, parentEdges;
+      let connectedEdges = network.getConnectedEdges(nodeId);
       if (direction === null) {
         [childEdges, parentEdges] = edges.get(connectedEdges).reduce(
           ([a, b], edge) => {
@@ -160,7 +162,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
         edges.update(childEdges);
       }
     }
-    return [nodeArray, edgeArray];
+    return { nodeArray: nodeObj.nodeArray, edgeArray: edgeArray, allChildren: [].concat.apply([], nodeObj.children) };
   };
 
   //click handler
@@ -198,8 +200,10 @@ const renderNetwork = (dataNodes, dataEdges) => {
     const clickedId = properties.nodes[0];
     const connectedNodes = getLinkedNodes(clickedId);
 
-    oldClickedNodeIds = connectedNodes[0];
-    oldClickedEdgeIds = connectedNodes[1];
+    oldClickedNodeIds = connectedNodes.nodeArray;
+    oldClickedEdgeIds = connectedNodes.edgeArray;
+
+    onNodeClicked(properties.nodes, connectedNodes.allChildren);
   });
 
   window.onresize = function () {
