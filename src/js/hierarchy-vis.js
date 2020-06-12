@@ -7,8 +7,8 @@ const renderHierarchy = (tree) => {
         data: tree,
       },
     })
-    .bind('loaded.jstree', (event, data) => {
-      $(this).jstree('open_all');
+    .on('loaded.jstree', function () {
+      $('#hierarchy').jstree('open_all');
     });
 };
 
