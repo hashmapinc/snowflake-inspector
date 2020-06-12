@@ -88,4 +88,13 @@ const buildData = (json) => {
 
   return data;
 };
-export default buildData;
+const filterNodes = (json, nodes = []) => {
+  let filteredArray = json.filter((element) => {
+    return nodes.filter((node) => node === element.GRANTED_TO_NAME && element.GRANTED_TO_TYPE === 'ROLE').length > 0
+      ? true
+      : false;
+  });
+  const x = buildData(filteredArray);
+  return x.hierarchy;
+};
+export { buildData, filterNodes };
