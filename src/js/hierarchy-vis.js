@@ -1,15 +1,21 @@
 import jstree from 'jstree';
+import { ICONS } from './constants';
+
+let rendered = false;
 const renderHierarchy = (tree) => {
-  $('#hierarchy').data('jstree', false).empty();
-  $('#hierarchy')
-    .jstree({
+  if (!rendered) {
+    $('#hierarchy').jstree({
       core: {
         data: tree,
       },
-    })
-    .on('loaded.jstree', function () {
-      $('#hierarchy').jstree('open_all');
+      types: ICONS,
+      plugins: ['types'],
     });
+    rendered = tree;
+  } else {
+    $('#hierarchy').jstree(true).settings.core.data = tree;
+    $('#hierarchy').jstree(true).refresh();
+  }
 };
 
 export default renderHierarchy;
