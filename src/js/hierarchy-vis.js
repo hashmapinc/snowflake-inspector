@@ -1,4 +1,3 @@
-import jstree from 'jstree';
 import { ICONS } from './constants';
 
 let rendered = false;
