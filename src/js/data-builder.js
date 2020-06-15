@@ -2,7 +2,7 @@ const buildData = (json) => {
   let data = {};
   data.nodes = [];
   data.edges = [];
-  data.hierarchy = [{ text: 'DATABASES', children: [] }];
+  data.hierarchy = [{ text: 'DATABASE', children: [], type: 'DATABASE' }];
 
   let database = [],
     schema = {},
@@ -41,25 +41,39 @@ const buildData = (json) => {
           arrows: 'to',
         });
     } else if (element.GRANTED_ON_DATABASE) {
-      const dbRootIndex = data.hierarchy.findIndex((database) => database.text === 'DATABASES');
+      const dbRootIndex = data.hierarchy.findIndex((database) => database.text === 'DATABASE');
       dbRoot = data.hierarchy[dbRootIndex];
 
       const dbIndex = dbRoot.children.findIndex((db) => db.text === element.GRANTED_ON_DATABASE);
-      database = dbIndex !== -1 ? dbRoot.children[dbIndex] : { text: element.GRANTED_ON_DATABASE, children: [] };
+      database =
+        dbIndex !== -1
+          ? dbRoot.children[dbIndex]
+          : {
+              text: element.GRANTED_ON_DATABASE,
+              children: [],
+              type: 'DATABASE',
+            };
 
       if (element.GRANTED_ON_SCHEMA) {
         let schemaIndex = database.children.findIndex((schema) => schema.text === element.GRANTED_ON_SCHEMA);
         schema =
-          schemaIndex !== -1 ? database.children[schemaIndex] : { text: element.GRANTED_ON_SCHEMA, children: [] };
+          schemaIndex !== -1
+            ? database.children[schemaIndex]
+            : { text: element.GRANTED_ON_SCHEMA, children: [], type: 'SCHEMA' };
 
         if (element.GRANTED_ON_TYPE && element.GRANTED_ON_TYPE !== 'SCHEMA') {
           let categoryIndex = schema.children.findIndex((category) => category.text === element.GRANTED_ON_TYPE);
           category =
-            categoryIndex !== -1 ? schema.children[categoryIndex] : { text: element.GRANTED_ON_TYPE, children: [] };
+            categoryIndex !== -1
+              ? schema.children[categoryIndex]
+              : { text: element.GRANTED_ON_TYPE, children: [], type: element.GRANTED_ON_TYPE };
           categoryIndex === -1 ? schema.children.push(category) : (schema.children[categoryIndex] = category);
 
           let itemIndex = category.children.findIndex((item) => item.text === element.GRANTED_ON_NAME);
-          item = itemIndex !== -1 ? category.children[itemIndex] : { text: element.GRANTED_ON_NAME, children: [] };
+          item =
+            itemIndex !== -1
+              ? category.children[itemIndex]
+              : { text: element.GRANTED_ON_NAME, children: [], type: element.GRANTED_ON_TYPE };
           itemIndex === -1 ? category.children.push(item) : (category.children[itemIndex] = item);
         }
 
@@ -68,7 +82,10 @@ const buildData = (json) => {
       dbIndex === -1 ? dbRoot.children.push(database) : (dbRoot.children[dbIndex] = database);
     } else if (element.GRANTED_ON_TYPE !== 'ROLE' && element.GRANTED_ON_TYPE !== 'USER') {
       let rootTypeIndex = data.hierarchy.findIndex((rootType) => rootType.text === element.GRANTED_ON_TYPE);
-      rootType = rootTypeIndex !== -1 ? data.hierarchy[rootTypeIndex] : { text: element.GRANTED_ON_TYPE, children: [] };
+      rootType =
+        rootTypeIndex !== -1
+          ? data.hierarchy[rootTypeIndex]
+          : { text: element.GRANTED_ON_TYPE, children: [], type: element.GRANTED_ON_TYPE };
       rootTypeIndex === -1 ? data.hierarchy.push(rootType) : (data.hierarchy[rootTypeIndex] = rootType);
 
       let otherIndex = rootType.children.findIndex((other) => other.text === element.GRANTED_ON_NAME);

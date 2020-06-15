@@ -5,7 +5,8 @@ import * as app from './js/app';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/style.css';
 import 'bootstrap';
-
+import jstree from 'jstree';
+import '../node_modules/@fortawesome/fontawesome-free/css/all.css';
 import initModal from './js/new-visualization-modal.js';
 
 // main
