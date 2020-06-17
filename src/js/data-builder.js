@@ -1,3 +1,4 @@
+//import { data } from 'vis-network';
 const buildData = (json) => {
   let data = {};
   data.nodes = [];
@@ -105,7 +106,7 @@ const buildData = (json) => {
 
   return data;
 };
-const filterNodes = (json, nodes = []) => {
+const filterObjects = (json, nodes = []) => {
   let filteredArray = json.filter((element) => {
     return nodes.filter((node) => node === element.GRANTED_TO_NAME && element.GRANTED_TO_TYPE === 'ROLE').length > 0
       ? true
@@ -114,4 +115,42 @@ const filterNodes = (json, nodes = []) => {
   const x = buildData(filteredArray);
   return x.hierarchy;
 };
-export { buildData, filterNodes };
+
+const filterNodes = (formattedData, json, jstreeObject) => {
+  let filteredArray = [];
+  const jstreeData = jstreeObject.instance.get_json();
+  const selectedObj = jstreeObject.instance.get_node(jstreeObject.selected[0]);
+
+  if (selectedObj.parent === '#') {
+    if (selectedObj.text === 'DATABASE') {
+      filteredArray = json.filter((element) => element.GRANTED_ON_DATABASE !== undefined);
+    }
+  }
+
+  return buildRelationship(formattedData.nodes, filteredArray);
+  // let filteredArray = json.filter((element) => {
+  //   return;
+  // });
+
+  console.log('data', jstreeObject.instance.get_node(jstreeObject.selected[0]));
+  console.log('json', jstreeObject.instance.get_json());
+};
+
+const buildRelationship = (nodes, filteredArray) => {
+  let relatedData = [];
+  filteredArray.forEach((element) => {
+    if (element.GRANTED_TO_TYPE === 'ROLE' || element.GRANTED_TO_TYPE === 'USER') {
+      const grantedToNodeIndex = relatedData.findIndex((node) => node.name === element.GRANTED_TO_NAME);
+      if (grantedToNodeIndex === -1) {
+        relatedData.push({
+          name: element.GRANTED_TO_NAME,
+          type: element.GRANTED_TO_TYPE,
+        });
+      }
+    }
+  });
+
+  const y = nodes.filter((node) => relatedData.some((value) => value.name === node.name));
+  return y;
+};
+export { buildData, filterNodes, filterObjects };
