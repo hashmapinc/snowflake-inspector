@@ -118,14 +118,80 @@ const filterObjects = (json, nodes = []) => {
 
 const filterNodes = (formattedData, json, jstreeObject) => {
   let filteredArray = [];
-  const jstreeData = jstreeObject.instance.get_json();
+  const jstreeData = jstreeObject.instance.get_json('#', { flat: true });
   const selectedObj = jstreeObject.instance.get_node(jstreeObject.selected[0]);
+  let levels = selectedObj.parents;
 
-  if (selectedObj.parent === '#') {
-    if (selectedObj.text === 'DATABASE') {
-      filteredArray = json.filter((element) => element.GRANTED_ON_DATABASE !== undefined);
-    }
+  let leafIndex = levels.findIndex((leaf) => leaf === selectedObj.id);
+  if (leafIndex === -1) {
+    levels.unshift(selectedObj.id);
   }
+  console.log(jstreeData);
+  console.log(selectedObj);
+
+  filteredArray = json.filter((element) => {
+    if (element.GRANTED_ON_TYPE !== 'ROLE' || element.GRANTED_ON_TYPE !== 'USER') {
+      let found = false;
+      for (let levelIndex of levels) {
+        let level = jstreeData.filter((x) => x.id === levelIndex);
+        if (levelIndex !== '#') {
+          if (element.GRANTED_ON_TYPE === level[0].type) {
+            if (level[0].type === 'SCHEMA') {
+            }
+            if (level[0].type === 'DATABASE') {
+            }
+            found = true;
+          } else {
+            found = false;
+          }
+          console.log(level[0].text);
+        }
+      }
+    }
+  });
+  // if (levels[1]) {
+  //   if (levels[1].text === 'DATABASE') {
+  //     filteredArray = json.filter((element) => element.GRANTED_ON_DATABASE !== undefined);
+  //   } else {
+  //     json.filter((element) => {
+  //       if (
+  //         (element.GRANTED_ON_TYPE !== 'ROLE' || element.GRANTED_ON_TYPE !== 'USER') &&
+  //         !element.GRANTED_ON_DATABASE
+  //       ) {
+  //         if (element.GRANTED_ON_TYPE === selectedObj.type) {
+  //           filteredArray.push(element);
+  //         }
+  //       }
+  //     });
+  //   }
+  // }
+  // if (selectedObj.text === 'DATABASE') {
+  //   filteredArray = json.filter((element) => element.GRANTED_ON_DATABASE !== undefined);
+  //   if ((element.GRANTED_ON_TYPE !== 'ROLE' || element.GRANTED_ON_TYPE !== 'USER') && !element.GRANTED_ON_DATABASE) {
+  //     if (selectedObj.parents.length === 1) {
+  //     } else {
+  //     }
+  //   } else {
+  //   }
+  // } else {
+  //   filteredArray = json.filter((element) => {
+  //     if ((element.GRANTED_ON_TYPE !== 'ROLE' || element.GRANTED_ON_TYPE !== 'USER') && !element.GRANTED_ON_DATABASE) {
+  //       if (selectedObj.parents.length === 1) {
+  //         if (element.GRANTED_ON_TYPE === selectedObj.type) {
+  //           return true;
+  //         } else {
+  //           return false;
+  //         }
+  //       } else if (selectedObj.parents.length > 1) {
+  //         if (element.GRANTED_ON_TYPE === selectedObj.type && element.GRANTED_ON_NAME === selectedObj.text) {
+  //           return true;
+  //         } else {
+  //           return false;
+  //         }
+  //       }
+  //     }
+  //   });
+  // }
 
   return buildRelationship(formattedData.nodes, filteredArray);
   // let filteredArray = json.filter((element) => {
@@ -136,7 +202,7 @@ const filterNodes = (formattedData, json, jstreeObject) => {
   console.log('json', jstreeObject.instance.get_json());
 };
 
-const buildRelationship = (nodes, filteredArray) => {
+const buildRelationship = (renderedNodes, filteredArray) => {
   let relatedData = [];
   filteredArray.forEach((element) => {
     if (element.GRANTED_TO_TYPE === 'ROLE' || element.GRANTED_TO_TYPE === 'USER') {
@@ -150,7 +216,6 @@ const buildRelationship = (nodes, filteredArray) => {
     }
   });
 
-  const y = nodes.filter((node) => relatedData.some((value) => value.name === node.name));
-  return y;
+  return renderedNodes.filter((node) => relatedData.some((item) => item.name === node.name));
 };
 export { buildData, filterNodes, filterObjects };
