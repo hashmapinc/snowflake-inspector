@@ -119,7 +119,8 @@ const filterNodes = (formattedData, json, jstreeObject) => {
   let filteredJson = [];
   const jstreeData = jstreeObject.instance.get_json('#', { flat: true });
   const selectedObj = jstreeObject.instance.get_node(jstreeObject.selected[0]);
-  let levels = [...selectedObj.parents.reverse()];
+  let levels = JSON.parse(JSON.stringify(selectedObj.parents));
+  levels = levels.reverse();
 
   let leafIndex = levels.findIndex((leaf) => leaf === selectedObj.id);
   if (leafIndex === -1) {
