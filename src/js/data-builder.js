@@ -105,13 +105,95 @@ const buildData = (json) => {
 
   return data;
 };
-const filterNodes = (json, nodes = []) => {
-  let filteredArray = json.filter((element) => {
+const filterObjects = (json, nodes = []) => {
+  let filteredJson = json.filter((element) => {
     return nodes.filter((node) => node === element.GRANTED_TO_NAME && element.GRANTED_TO_TYPE === 'ROLE').length > 0
       ? true
       : false;
   });
-  const x = buildData(filteredArray);
+  const x = buildData(filteredJson);
   return x.hierarchy;
 };
-export { buildData, filterNodes };
+
+const filterNodes = (formattedData, json, jstreeObject) => {
+  let filteredJson = [];
+  const jstreeData = jstreeObject.instance.get_json('#', { flat: true });
+  const selectedObj = jstreeObject.instance.get_node(jstreeObject.selected[0]);
+  let levels = JSON.parse(JSON.stringify(selectedObj.parents));
+  levels = levels.reverse();
+
+  let leafIndex = levels.findIndex((leaf) => leaf === selectedObj.id);
+  if (leafIndex === -1) {
+    levels.push(selectedObj.id);
+  }
+
+  let levelsData = [];
+  for (let levelIndex of levels) {
+    if (levelIndex !== '#') {
+      levelsData.push(jstreeData.filter((x) => x.id === levelIndex)[0]);
+    }
+  }
+
+  filteredJson = json.filter((element) => {
+    if (element.GRANTED_ON_TYPE !== 'ROLE' || element.GRANTED_ON_TYPE !== 'USER') {
+      if (element.GRANTED_ON_TYPE === selectedObj.type) {
+        if (element.GRANTED_ON_DATABASE && levelsData[0] != null && levelsData[0].type === 'DATABASE') {
+          if (
+            levelsData[1] != null &&
+            levelsData[1].type === 'DATABASE' &&
+            levelsData[1].text === element.GRANTED_ON_DATABASE
+          ) {
+            if (levelsData[2] != null) {
+              if (levelsData[2].text === element.GRANTED_ON_SCHEMA && levelsData[2].type === 'SCHEMA') {
+                if (levelsData[4] != null) {
+                  if (
+                    levelsData[4].type === element.GRANTED_ON_TYPE &&
+                    levelsData[4].text === element.GRANTED_ON_NAME
+                  ) {
+                    return true;
+                  }
+                } else if (
+                  levelsData[2].text === element.GRANTED_ON_NAME &&
+                  levelsData[2].type === element.GRANTED_ON_TYPE
+                ) {
+                  return true;
+                }
+              }
+            } else {
+              return true;
+            }
+          }
+        } else if (levelsData[0] != null) {
+          if (
+            levelsData[1] != null &&
+            levelsData[1].text === element.GRANTED_ON_NAME &&
+            levelsData[1].type === element.GRANTED_ON_TYPE
+          ) {
+            return true;
+          }
+        }
+      }
+    }
+  });
+
+  return buildRelationship(formattedData.nodes, filteredJson);
+};
+
+const buildRelationship = (renderedNodes, filteredJson) => {
+  let relatedData = [];
+  filteredJson.forEach((element) => {
+    if (element.GRANTED_TO_TYPE === 'ROLE' || element.GRANTED_TO_TYPE === 'USER') {
+      const grantedToNodeIndex = relatedData.findIndex((node) => node.name === element.GRANTED_TO_NAME);
+      if (grantedToNodeIndex === -1) {
+        relatedData.push({
+          name: element.GRANTED_TO_NAME,
+          type: element.GRANTED_TO_TYPE,
+        });
+      }
+    }
+  });
+
+  //Return nodes that are related to provided filtered json
+  return renderedNodes.filter((node) => relatedData.some((item) => item.name === node.name));
+};
+export { buildData, filterNodes, filterObjects };

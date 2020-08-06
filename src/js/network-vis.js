@@ -1,8 +1,8 @@
 import { Network } from 'vis-network/peer/esm/vis-network';
-import { DataSet } from 'vis-data/peer/esm/vis-data';
+import { DataSet, DataView } from 'vis-data/peer/esm/vis-data';
 import { COLORS } from './constants';
 import 'jstree/dist/themes/default/style.css';
-import { onNodeClicked } from './app';
+import { onNodeClicked, onNetworkReset } from './app';
 // get vis div
 const networkVisDiv = document.getElementById('network-vis');
 
@@ -90,8 +90,31 @@ const renderNetwork = (dataNodes, dataEdges) => {
   // initialize network!
   let network = new Network(networkVisDiv, data, options);
 
-  let getLinkedNodes = (nodeId, nodeObj = { children: [], nodeArray: [] }, edgeArray = [], direction = null) => {
+  const filterNodes = (filterArray) => {
+    var view = new DataView(nodes, {
+      filter: (item) => {
+        return filterArray.indexOf(item.id) !== -1;
+      },
+    });
+
+    network.setData({ nodes: view, edges: edges });
+    network.redraw();
+  };
+
+  const resetNetwork = () => {
+    network.setData(data);
+  };
+
+  const showLinkedNodes = (
+    nodeId,
+    parentsOnly = false,
+    colorNodes = true,
+    nodeObj = { children: [], parents: [], nodeArray: [] },
+    edgeArray = [],
+    direction = null
+  ) => {
     let allChildren = [];
+    let allParents = [];
     const selectNodesRecursively = (connectedNodes, direction, background, border) => {
       if (connectedNodes) {
         connectedNodes.forEach((child) => {
@@ -100,14 +123,20 @@ const renderNetwork = (dataNodes, dataEdges) => {
             if (direction === 'child' && nodeObj.children.indexOf(child) === -1) {
               nodeObj.children.push(child);
             }
-            nodes.update({
-              id: child,
-              color: {
-                background: background,
-                border: border,
-              },
-            });
-            getLinkedNodes(child, nodeObj, edgeArray, direction);
+            if (direction === 'parent' && nodeObj.parents.indexOf(child) === -1) {
+              nodeObj.parents.push(child);
+            }
+            if (colorNodes) {
+              nodes.update({
+                id: child,
+                color: {
+                  background: background,
+                  border: border,
+                },
+              });
+            }
+
+            showLinkedNodes(child, parentsOnly, colorNodes, nodeObj, edgeArray, direction);
           }
         });
       }
@@ -132,7 +161,9 @@ const renderNetwork = (dataNodes, dataEdges) => {
         let parentNodes = network.getConnectedNodes(nodeId, 'from');
         let childNodes = network.getConnectedNodes(nodeId, 'to');
         selectNodesRecursively(parentNodes, 'parent', COLORS.parentSelectedBackground, COLORS.parentSelectedBorder);
-        selectNodesRecursively(childNodes, 'child', COLORS.childSelectedBackground, COLORS.childSelectedBorder);
+        if (!parentsOnly) {
+          selectNodesRecursively(childNodes, 'child', COLORS.childSelectedBackground, COLORS.childSelectedBorder);
+        }
       } else if (direction === 'parent') {
         parentEdges = edges.get(childEdges).filter((edge) => {
           return edge.to === nodeId;
@@ -147,14 +178,14 @@ const renderNetwork = (dataNodes, dataEdges) => {
         selectNodesRecursively(childNodes, 'child', COLORS.childSelectedBackground, COLORS.childSelectedBorder);
       }
 
-      if (parentEdges && parentEdges.length > 0) {
+      if (parentEdges && parentEdges.length > 0 && colorNodes) {
         parentEdges.map((edge) => {
           edge.color = COLORS.parentEdge;
           edgeArray.push(edge);
         });
         edges.update(parentEdges);
       }
-      if (childEdges && childEdges.length > 0) {
+      if (childEdges && childEdges.length > 0 && colorNodes) {
         childEdges.map((edge) => {
           edge.color = COLORS.childEdge;
           edgeArray.push(edge);
@@ -162,11 +193,15 @@ const renderNetwork = (dataNodes, dataEdges) => {
         edges.update(childEdges);
       }
     }
-    return { nodeArray: nodeObj.nodeArray, edgeArray: edgeArray, allChildren: [].concat.apply([], nodeObj.children) };
+    return {
+      nodeArray: nodeObj.nodeArray,
+      edgeArray: edgeArray,
+      allChildren: [].concat.apply([], nodeObj.children),
+      allParents: [].concat.apply([], nodeObj.parents),
+    };
   };
 
-  //click handler
-  network.on('select', (properties) => {
+  const clearColorSelection = () => {
     if (oldClickedNodeIds.length > 0) {
       let oldNodes = nodes.get(oldClickedNodeIds);
       oldNodes.forEach((node) => {
@@ -197,8 +232,13 @@ const renderNetwork = (dataNodes, dataEdges) => {
       });
       edges.update(oldClickedEdgeIds);
     }
+  };
+
+  //click handler
+  network.on('select', (properties) => {
+    clearColorSelection();
     const clickedId = properties.nodes[0];
-    const connectedNodes = getLinkedNodes(clickedId);
+    const connectedNodes = showLinkedNodes(clickedId);
 
     oldClickedNodeIds = connectedNodes.nodeArray;
     oldClickedEdgeIds = connectedNodes.edgeArray;
@@ -213,9 +253,21 @@ const renderNetwork = (dataNodes, dataEdges) => {
     network.canvas.body.container.style.cursor = 'default';
   });
 
+  network.on('click', (event) => {
+    if (event.nodes.length === 0) {
+      if (event.edges.length === 0) {
+        network.setData(data);
+        network.redraw();
+        clearColorSelection();
+        onNetworkReset();
+      }
+    }
+  });
+
   window.onresize = () => {
     network.fit();
   };
+  return { showLinkedNodes: showLinkedNodes, filterNodes: filterNodes, resetNetwork: resetNetwork };
 };
 
 export default renderNetwork;
