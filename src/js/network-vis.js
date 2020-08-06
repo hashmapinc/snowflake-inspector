@@ -201,8 +201,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
     };
   };
 
-  //click handler
-  network.on('select', (properties) => {
+  const clearColorSelection = () => {
     if (oldClickedNodeIds.length > 0) {
       let oldNodes = nodes.get(oldClickedNodeIds);
       oldNodes.forEach((node) => {
@@ -233,6 +232,11 @@ const renderNetwork = (dataNodes, dataEdges) => {
       });
       edges.update(oldClickedEdgeIds);
     }
+  };
+
+  //click handler
+  network.on('select', (properties) => {
+    clearColorSelection();
     const clickedId = properties.nodes[0];
     const connectedNodes = showLinkedNodes(clickedId);
 
@@ -254,6 +258,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
       if (event.edges.length === 0) {
         network.setData(data);
         network.redraw();
+        clearColorSelection();
         onNetworkReset();
       }
     }
