@@ -10,7 +10,7 @@ const init = (rawData) => {
   data.nodesFiltered = false;
   data.formattedData = buildData(rawData);
   data.hierarchy = data.formattedData.hierarchy;
-  renderNetwork(data.formattedData.nodes, data.formattedData.edges);
+  data.renderedNetwork = renderNetwork(data.formattedData.nodes, data.formattedData.edges);
   renderHierarchy(data.hierarchy);
 };
 const onNodeClicked = (currentNode, allChildren = []) => {
@@ -26,19 +26,36 @@ const onNodeClicked = (currentNode, allChildren = []) => {
     data.hierarchyFiltered = false;
   }
 };
+
+const onNetworkReset = () => {
+  data.nodesFiltered = false;
+  renderHierarchy(data.hierarchy);
+};
+
 $('#hierarchy').on('select_node.jstree', function (e, jstreeObject) {
   if (jstreeObject.event) {
     const filteredNodes = filterNodes(data.formattedData, data.rawData, jstreeObject);
-    renderNetwork(filteredNodes, data.formattedData.edges);
+    data.renderedNetwork.resetNetwork();
+    let combinedNodeList = [];
+    filteredNodes.map((node) => {
+      combinedNodeList.push(node.name);
+      data.renderedNetwork.showLinkedNodes(node.name, true, false).allParents.map((id) => {
+        if (combinedNodeList.indexOf(id) === -1) {
+          combinedNodeList.push(id);
+        }
+      });
+    });
+
+    data.renderedNetwork.filterNodes(combinedNodeList);
     data.nodesFiltered = true;
   }
 });
 $('#hierarchy-vis').click(function (e) {
   if (e.target.id === 'hierarchy-vis') {
     if (data.nodesFiltered) {
-      renderNetwork(data.formattedData.nodes, data.formattedData.edges);
+      data.renderedNetwork.resetNetwork();
       data.nodesFiltered = false;
     }
   }
 });
-export { init, onNodeClicked };
+export { init, onNodeClicked, onNetworkReset };

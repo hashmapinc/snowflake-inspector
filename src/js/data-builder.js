@@ -1,4 +1,3 @@
-//import { data } from 'vis-network';
 const buildData = (json) => {
   let data = {};
   data.nodes = [];
@@ -107,104 +106,81 @@ const buildData = (json) => {
   return data;
 };
 const filterObjects = (json, nodes = []) => {
-  let filteredArray = json.filter((element) => {
+  let filteredJson = json.filter((element) => {
     return nodes.filter((node) => node === element.GRANTED_TO_NAME && element.GRANTED_TO_TYPE === 'ROLE').length > 0
       ? true
       : false;
   });
-  const x = buildData(filteredArray);
+  const x = buildData(filteredJson);
   return x.hierarchy;
 };
 
 const filterNodes = (formattedData, json, jstreeObject) => {
-  let filteredArray = [];
+  let filteredJson = [];
   const jstreeData = jstreeObject.instance.get_json('#', { flat: true });
   const selectedObj = jstreeObject.instance.get_node(jstreeObject.selected[0]);
-  let levels = selectedObj.parents;
+  let levels = [...selectedObj.parents.reverse()];
 
   let leafIndex = levels.findIndex((leaf) => leaf === selectedObj.id);
   if (leafIndex === -1) {
-    levels.unshift(selectedObj.id);
+    levels.push(selectedObj.id);
   }
-  console.log(jstreeData);
-  console.log(selectedObj);
 
-  filteredArray = json.filter((element) => {
+  let levelsData = [];
+  for (let levelIndex of levels) {
+    if (levelIndex !== '#') {
+      levelsData.push(jstreeData.filter((x) => x.id === levelIndex)[0]);
+    }
+  }
+
+  filteredJson = json.filter((element) => {
     if (element.GRANTED_ON_TYPE !== 'ROLE' || element.GRANTED_ON_TYPE !== 'USER') {
-      let found = false;
-      for (let levelIndex of levels) {
-        let level = jstreeData.filter((x) => x.id === levelIndex);
-        if (levelIndex !== '#') {
-          if (element.GRANTED_ON_TYPE === level[0].type) {
-            if (level[0].type === 'SCHEMA') {
+      if (element.GRANTED_ON_TYPE === selectedObj.type) {
+        if (element.GRANTED_ON_DATABASE && levelsData[0] != null && levelsData[0].type === 'DATABASE') {
+          if (
+            levelsData[1] != null &&
+            levelsData[1].type === 'DATABASE' &&
+            levelsData[1].text === element.GRANTED_ON_DATABASE
+          ) {
+            if (levelsData[2] != null) {
+              if (levelsData[2].text === element.GRANTED_ON_SCHEMA && levelsData[2].type === 'SCHEMA') {
+                if (levelsData[4] != null) {
+                  if (
+                    levelsData[4].type === element.GRANTED_ON_TYPE &&
+                    levelsData[4].text === element.GRANTED_ON_NAME
+                  ) {
+                    return true;
+                  }
+                } else if (
+                  levelsData[2].text === element.GRANTED_ON_NAME &&
+                  levelsData[2].type === element.GRANTED_ON_TYPE
+                ) {
+                  return true;
+                }
+              }
+            } else {
+              return true;
             }
-            if (level[0].type === 'DATABASE') {
-            }
-            found = true;
-          } else {
-            found = false;
           }
-          console.log(level[0].text);
+        } else if (levelsData[0] != null) {
+          if (
+            levelsData[1] != null &&
+            levelsData[1].text === element.GRANTED_ON_NAME &&
+            levelsData[1].type === element.GRANTED_ON_TYPE
+          ) {
+            return true;
+          }
         }
       }
     }
   });
-  // if (levels[1]) {
-  //   if (levels[1].text === 'DATABASE') {
-  //     filteredArray = json.filter((element) => element.GRANTED_ON_DATABASE !== undefined);
-  //   } else {
-  //     json.filter((element) => {
-  //       if (
-  //         (element.GRANTED_ON_TYPE !== 'ROLE' || element.GRANTED_ON_TYPE !== 'USER') &&
-  //         !element.GRANTED_ON_DATABASE
-  //       ) {
-  //         if (element.GRANTED_ON_TYPE === selectedObj.type) {
-  //           filteredArray.push(element);
-  //         }
-  //       }
-  //     });
-  //   }
-  // }
-  // if (selectedObj.text === 'DATABASE') {
-  //   filteredArray = json.filter((element) => element.GRANTED_ON_DATABASE !== undefined);
-  //   if ((element.GRANTED_ON_TYPE !== 'ROLE' || element.GRANTED_ON_TYPE !== 'USER') && !element.GRANTED_ON_DATABASE) {
-  //     if (selectedObj.parents.length === 1) {
-  //     } else {
-  //     }
-  //   } else {
-  //   }
-  // } else {
-  //   filteredArray = json.filter((element) => {
-  //     if ((element.GRANTED_ON_TYPE !== 'ROLE' || element.GRANTED_ON_TYPE !== 'USER') && !element.GRANTED_ON_DATABASE) {
-  //       if (selectedObj.parents.length === 1) {
-  //         if (element.GRANTED_ON_TYPE === selectedObj.type) {
-  //           return true;
-  //         } else {
-  //           return false;
-  //         }
-  //       } else if (selectedObj.parents.length > 1) {
-  //         if (element.GRANTED_ON_TYPE === selectedObj.type && element.GRANTED_ON_NAME === selectedObj.text) {
-  //           return true;
-  //         } else {
-  //           return false;
-  //         }
-  //       }
-  //     }
-  //   });
-  // }
 
-  return buildRelationship(formattedData.nodes, filteredArray);
-  // let filteredArray = json.filter((element) => {
-  //   return;
-  // });
-
-  console.log('data', jstreeObject.instance.get_node(jstreeObject.selected[0]));
-  console.log('json', jstreeObject.instance.get_json());
+  return buildRelationship(formattedData.nodes, filteredJson);
 };
 
-const buildRelationship = (renderedNodes, filteredArray) => {
+const buildRelationship = (renderedNodes, filteredJson) => {
   let relatedData = [];
-  filteredArray.forEach((element) => {
+  filteredJson.forEach((element) => {
     if (element.GRANTED_TO_TYPE === 'ROLE' || element.GRANTED_TO_TYPE === 'USER') {
       const grantedToNodeIndex = relatedData.findIndex((node) => node.name === element.GRANTED_TO_NAME);
       if (grantedToNodeIndex === -1) {
@@ -216,6 +192,7 @@ const buildRelationship = (renderedNodes, filteredArray) => {
     }
   });
 
+  //Return nodes that are related to provided filtered json
   return renderedNodes.filter((node) => relatedData.some((item) => item.name === node.name));
 };
 export { buildData, filterNodes, filterObjects };
