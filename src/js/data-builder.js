@@ -137,40 +137,55 @@ const filterNodes = (formattedData, json, jstreeObject) => {
   filteredJson = json.filter((element) => {
     if (element.GRANTED_ON_TYPE !== 'ROLE' || element.GRANTED_ON_TYPE !== 'USER') {
       if (element.GRANTED_ON_TYPE === selectedObj.type) {
-        if (element.GRANTED_ON_DATABASE && levelsData[0] != null && levelsData[0].type === 'DATABASE') {
-          if (
-            levelsData[1] != null &&
-            levelsData[1].type === 'DATABASE' &&
-            levelsData[1].text === element.GRANTED_ON_DATABASE
-          ) {
-            if (levelsData[2] != null) {
-              if (levelsData[2].text === element.GRANTED_ON_SCHEMA && levelsData[2].type === 'SCHEMA') {
-                if (levelsData[4] != null) {
-                  if (
-                    levelsData[4].type === element.GRANTED_ON_TYPE &&
-                    levelsData[4].text === element.GRANTED_ON_NAME
+        if (selectedObj.parent !== '#') {
+          if (element.GRANTED_ON_DATABASE && levelsData[0] != null && levelsData[0].type === 'DATABASE') {
+            if (
+              levelsData[1] != null &&
+              levelsData[1].type === 'DATABASE' &&
+              levelsData[1].text === element.GRANTED_ON_DATABASE
+            ) {
+              if (levelsData[2] != null) {
+                if (levelsData[2].text === element.GRANTED_ON_SCHEMA && levelsData[2].type === 'SCHEMA') {
+                  if (levelsData[3] != null) {
+                    if (levelsData[4] != null) {
+                      if (
+                        levelsData[4].type === element.GRANTED_ON_TYPE &&
+                        levelsData[4].text === element.GRANTED_ON_NAME
+                      ) {
+                        return true;
+                      }
+                    } else if (
+                      levelsData[3].text === levelsData[3].type &&
+                      levelsData[3].type === element.GRANTED_ON_TYPE
+                    ) {
+                      return true;
+                    }
+                  } else if (
+                    levelsData[2].text === element.GRANTED_ON_NAME &&
+                    levelsData[2].type === element.GRANTED_ON_TYPE
                   ) {
                     return true;
                   }
-                } else if (
-                  levelsData[2].text === element.GRANTED_ON_NAME &&
-                  levelsData[2].type === element.GRANTED_ON_TYPE
-                ) {
-                  return true;
                 }
+              } else {
+                return true;
               }
-            } else {
+            }
+          } else if (levelsData[0] != null) {
+            if (
+              levelsData[1] != null &&
+              levelsData[1].text === element.GRANTED_ON_NAME &&
+              levelsData[1].type === element.GRANTED_ON_TYPE
+            ) {
               return true;
             }
           }
-        } else if (levelsData[0] != null) {
-          if (
-            levelsData[1] != null &&
-            levelsData[1].text === element.GRANTED_ON_NAME &&
-            levelsData[1].type === element.GRANTED_ON_TYPE
-          ) {
-            return true;
-          }
+        } else if (
+          selectedObj.parent === '#' &&
+          selectedObj.text === selectedObj.type &&
+          selectedObj.type === element.GRANTED_ON_TYPE
+        ) {
+          return true;
         }
       }
     }
