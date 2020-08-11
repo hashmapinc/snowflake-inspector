@@ -32,6 +32,10 @@ const onNetworkReset = () => {
   renderHierarchy(data.hierarchy);
 };
 
+const isNetworkReset = () => {
+  return data.nodesFiltered;
+};
+
 $('#hierarchy').on('select_node.jstree', function (e, jstreeObject) {
   if (jstreeObject.event) {
     const filteredNodes = filterNodes(data.formattedData, data.rawData, jstreeObject);
@@ -46,7 +50,8 @@ $('#hierarchy').on('select_node.jstree', function (e, jstreeObject) {
       });
     });
 
-    data.renderedNetwork.filterNodes(combinedNodeList);
+    data.renderedNetwork.showFilteredNodes(combinedNodeList);
+    data.renderedNetwork.highlightNodes(filteredNodes);
     data.nodesFiltered = true;
   }
 });
@@ -58,4 +63,4 @@ $('#hierarchy-vis').click(function (e) {
     }
   }
 });
-export { init, onNodeClicked, onNetworkReset };
+export { init, onNodeClicked, onNetworkReset, isNetworkReset };

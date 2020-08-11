@@ -2,7 +2,7 @@ import { Network } from 'vis-network/peer/esm/vis-network';
 import { DataSet, DataView } from 'vis-data/peer/esm/vis-data';
 import { COLORS } from './constants';
 import 'jstree/dist/themes/default/style.css';
-import { onNodeClicked, onNetworkReset } from './app';
+import { onNodeClicked, onNetworkReset, isNetworkReset } from './app';
 // get vis div
 const networkVisDiv = document.getElementById('network-vis');
 
@@ -90,7 +90,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
   // initialize network!
   let network = new Network(networkVisDiv, data, options);
 
-  const filterNodes = (filterArray) => {
+  const showFilteredNodes = (filterArray) => {
     var view = new DataView(nodes, {
       filter: (item) => {
         return filterArray.indexOf(item.id) !== -1;
@@ -234,6 +234,16 @@ const renderNetwork = (dataNodes, dataEdges) => {
     }
   };
 
+  const highlightNodes = (nodes) => {
+    clearColorSelection();
+    let nodIds = [];
+
+    nodes.map((node) => {
+      nodIds.push(node.name);
+    });
+    network.selectNodes(nodIds);
+  };
+
   //click handler
   network.on('select', (properties) => {
     clearColorSelection();
@@ -255,7 +265,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
 
   network.on('click', (event) => {
     if (event.nodes.length === 0) {
-      if (event.edges.length === 0) {
+      if (event.edges.length === 0 && isNetworkReset()) {
         network.setData(data);
         network.redraw();
         clearColorSelection();
@@ -267,7 +277,12 @@ const renderNetwork = (dataNodes, dataEdges) => {
   window.onresize = () => {
     network.fit();
   };
-  return { showLinkedNodes: showLinkedNodes, filterNodes: filterNodes, resetNetwork: resetNetwork };
+  return {
+    showLinkedNodes: showLinkedNodes,
+    showFilteredNodes: showFilteredNodes,
+    resetNetwork: resetNetwork,
+    highlightNodes: highlightNodes,
+  };
 };
 
 export default renderNetwork;
