@@ -8,7 +8,7 @@ const renderHierarchy = (tree) => {
         data: tree,
       },
       types: ICONS,
-      plugins: ['types'],
+      plugins: ['types', 'sort'],
     });
     rendered = tree;
   } else {

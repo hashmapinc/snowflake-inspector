@@ -101,18 +101,8 @@ const buildData = (json) => {
       otherIndex === -1 ? rootType.children.push(other) : (rootType.children[otherIndex] = other);
     }
   });
-  data.hierarchy.sort((a, b) => (a.text > b.text ? 1 : -1));
 
   return data;
-};
-const filterObjects = (json, nodes = []) => {
-  let filteredJson = json.filter((element) => {
-    return nodes.filter((node) => node === element.GRANTED_TO_NAME && element.GRANTED_TO_TYPE === 'ROLE').length > 0
-      ? true
-      : false;
-  });
-  const x = buildData(filteredJson);
-  return x.hierarchy;
 };
 
 const filterNodes = (formattedData, json, jstreeObject) => {
@@ -191,10 +181,10 @@ const filterNodes = (formattedData, json, jstreeObject) => {
     }
   });
 
-  return buildRelationship(formattedData.nodes, filteredJson);
+  return buildObjectNodeRelationship(formattedData.nodes, filteredJson);
 };
 
-const buildRelationship = (renderedNodes, filteredJson) => {
+const buildObjectNodeRelationship = (renderedNodes, filteredJson) => {
   let relatedData = [];
   filteredJson.forEach((element) => {
     if (element.GRANTED_TO_TYPE === 'ROLE' || element.GRANTED_TO_TYPE === 'USER') {
@@ -211,4 +201,14 @@ const buildRelationship = (renderedNodes, filteredJson) => {
   //Return nodes that are related to provided filtered json
   return renderedNodes.filter((node) => relatedData.some((item) => item.name === node.name));
 };
-export { buildData, filterNodes, filterObjects };
+
+const filterObjectsOnNodeClick = (json, nodes = []) => {
+  let filteredJson = json.filter((element) => {
+    return nodes.filter((node) => node === element.GRANTED_TO_NAME && element.GRANTED_TO_TYPE === 'ROLE').length > 0
+      ? true
+      : false;
+  });
+  const x = buildData(filteredJson);
+  return x.hierarchy;
+};
+export { buildData, filterNodes, filterObjectsOnNodeClick };
