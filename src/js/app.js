@@ -1,4 +1,4 @@
-import { buildData, filterObjects, filterNodes } from './data-builder';
+import { buildData, filterObjectsOnNodeClick, filterNodes } from './data-builder';
 import renderNetwork from './network-vis';
 import renderHierarchy from './hierarchy-vis';
 
@@ -19,7 +19,7 @@ const onNodeClicked = (currentNode, allChildren = []) => {
       data.hierarchyFiltered = true;
       const nodeArray = [];
       nodeArray.push(currentNode[0]);
-      renderHierarchy(filterObjects(data.rawData, currentNode.concat(allChildren)));
+      renderHierarchy(filterObjectsOnNodeClick(data.rawData, currentNode.concat(allChildren)));
     }
   } else if (data.hierarchyFiltered) {
     renderHierarchy(data.hierarchy);
