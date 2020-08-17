@@ -2,7 +2,7 @@ import { Network } from 'vis-network/peer/esm/vis-network';
 import { DataSet, DataView } from 'vis-data/peer/esm/vis-data';
 import { COLORS } from './constants';
 import 'jstree/dist/themes/default/style.css';
-import { onNodeClicked, onNetworkReset, isNetworkReset } from './app';
+import { onNodeClicked, onNetworkReset, isNodesFiltered, isHierarchyFiltered } from './app';
 // get vis div
 const networkVisDiv = document.getElementById('network-vis');
 
@@ -58,7 +58,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
 
   dataNodes.forEach((element) => {
     nodes.add({
-      id: element.name,
+      id: element.id,
       label: element.name,
       shape: 'box',
       color: {
@@ -239,7 +239,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
     let nodIds = [];
 
     nodes.map((node) => {
-      nodIds.push(node.name);
+      nodIds.push(node.id);
     });
     network.selectNodes(nodIds);
   };
@@ -265,11 +265,14 @@ const renderNetwork = (dataNodes, dataEdges) => {
 
   network.on('click', (event) => {
     if (event.nodes.length === 0) {
-      if (event.edges.length === 0 && isNetworkReset()) {
+      if (event.edges.length === 0 && isNodesFiltered()) {
         network.setData(data);
         network.redraw();
         clearColorSelection();
         onNetworkReset();
+      }
+      if (isHierarchyFiltered) {
+        onNodeClicked([]);
       }
     }
   });
