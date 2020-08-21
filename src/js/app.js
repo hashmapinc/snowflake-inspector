@@ -1,9 +1,13 @@
 import { buildData, filterObjectsOnNodeClick, filterNodes } from './data-builder';
 import renderNetwork from './network-vis';
 import renderHierarchy from './hierarchy-vis';
+import '../../node_modules/jquery-ui-dist/jquery-ui';
+import '../../node_modules/jquery-ui-dist/jquery-ui.min.css';
+
+// Needed for node search functionality
+let allNodeNames = [];
 
 let data = {};
-
 const init = (rawData) => {
   data.rawData = rawData;
   data.hierarchyFiltered = false;
@@ -11,6 +15,9 @@ const init = (rawData) => {
   data.formattedData = buildData(rawData);
   data.hierarchy = data.formattedData.hierarchy;
   data.renderedNetwork = renderNetwork(data.formattedData.nodes, data.formattedData.edges);
+  data.formattedData.nodes.map((x) => {
+    allNodeNames.push({ label: x.name, value: x.id });
+  });
   renderHierarchy(data.hierarchy);
 };
 const onNodeClicked = (currentNode, allChildren = []) => {
@@ -63,4 +70,23 @@ $('#hierarchy-vis').click(function (e) {
     }
   }
 });
+
+$('#search-selector').autocomplete({
+  source: allNodeNames,
+  select: (event, ui) => {
+    var label = ui.item.label;
+    var value = ui.item.value;
+    //store in session
+    alert(value);
+  },
+});
+
+$('#search-selector').change(function () {
+  // alert($('#search-selector').val());
+});
+
+$('#network-search').submit(function (event) {
+  event.preventDefault();
+});
+
 export { init, onNodeClicked, onNetworkReset, isNetworkReset };
