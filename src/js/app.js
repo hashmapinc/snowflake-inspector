@@ -39,8 +39,12 @@ const onNetworkReset = () => {
   renderHierarchy(data.hierarchy);
 };
 
-const isNetworkReset = () => {
+const isNodesFiltered = () => {
   return data.nodesFiltered;
+};
+
+const isHierarchyFiltered = () => {
+  return data.hierarchyFiltered;
 };
 
 $('#hierarchy').on('select_node.jstree', function (e, jstreeObject) {
@@ -49,8 +53,8 @@ $('#hierarchy').on('select_node.jstree', function (e, jstreeObject) {
     data.renderedNetwork.resetNetwork();
     let combinedNodeList = [];
     filteredNodes.map((node) => {
-      combinedNodeList.push(node.name);
-      data.renderedNetwork.showLinkedNodes(node.name, true, false).allParents.map((id) => {
+      combinedNodeList.push(node.id);
+      data.renderedNetwork.showLinkedNodes(node.id, true, false).allParents.map((id) => {
         if (combinedNodeList.indexOf(id) === -1) {
           combinedNodeList.push(id);
         }
@@ -89,4 +93,4 @@ $('#network-search').submit(function (event) {
   event.preventDefault();
 });
 
-export { init, onNodeClicked, onNetworkReset, isNetworkReset };
+export { init, onNodeClicked, onNetworkReset, isNodesFiltered, isHierarchyFiltered };
