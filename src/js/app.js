@@ -77,20 +77,33 @@ $('#hierarchy-vis').click(function (e) {
 
 $('#search-selector').autocomplete({
   source: allNodeNames,
-  select: (event, ui) => {
-    var label = ui.item.label;
-    var value = ui.item.value;
-    //store in session
-    alert(value);
+  select: (e, ui) => {
+    e.preventDefault();
+    $('#search-selector').val(ui.item.label);
+    $('#search-selector').data('key', ui.item.value);
+    searchNode(ui.item.value);
   },
 });
 
-$('#search-selector').change(function () {
-  // alert($('#search-selector').val());
-});
+const searchNode = (searchId) => {
+  data.renderedNetwork.resetNetwork();
 
-$('#network-search').submit(function (event) {
-  event.preventDefault();
+  let connectedNodeIds = [searchId];
+  let connectedNodes = data.renderedNetwork.showLinkedNodes(searchId);
+  connectedNodes.nodeArray.map((id) => {
+    if (connectedNodeIds.indexOf(id) === -1) {
+      connectedNodeIds.push(id);
+    }
+  });
+  data.renderedNetwork.showFilteredNodes(connectedNodeIds);
+  data.renderedNetwork.highlightNodes([{ id: searchId }], false);
+  data.renderedNetwork.nodeSelectionEventHandler([searchId], connectedNodes);
+
+  data.nodesFiltered = true;
+};
+$('#network-search').submit(function (e) {
+  e.preventDefault();
+  searchNode($('#search-selector').data('key'));
 });
 
 export { init, onNodeClicked, onNetworkReset, isNodesFiltered, isHierarchyFiltered };

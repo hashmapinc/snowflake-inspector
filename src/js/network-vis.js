@@ -90,10 +90,10 @@ const renderNetwork = (dataNodes, dataEdges) => {
   // initialize network!
   let network = new Network(networkVisDiv, data, options);
 
-  const showFilteredNodes = (filterArray) => {
+  const showFilteredNodes = (filteredNodeIds) => {
     var view = new DataView(nodes, {
       filter: (item) => {
-        return filterArray.indexOf(item.id) !== -1;
+        return filteredNodeIds.indexOf(item.id) !== -1;
       },
     });
 
@@ -202,7 +202,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
   };
 
   const clearColorSelection = () => {
-    if (oldClickedNodeIds.length > 0) {
+    if (oldClickedNodeIds && oldClickedNodeIds.length > 0) {
       let oldNodes = nodes.get(oldClickedNodeIds);
       oldNodes.forEach((node) => {
         node.color = {
@@ -220,7 +220,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
       });
       nodes.update(oldNodes);
     }
-    if (oldClickedEdgeIds.length > 0) {
+    if (oldClickedEdgeIds && oldClickedEdgeIds.length > 0) {
       oldClickedEdgeIds.forEach((edge) => {
         edge.color = {
           color: COLORS.edge,
@@ -232,10 +232,12 @@ const renderNetwork = (dataNodes, dataEdges) => {
       });
       edges.update(oldClickedEdgeIds);
     }
+    oldClickedNodeIds = [];
+    oldClickedEdgeIds = [];
   };
 
-  const highlightNodes = (nodes) => {
-    clearColorSelection();
+  const highlightNodes = (nodes, clearSelection = true) => {
+    if (clearSelection) clearColorSelection();
     let nodIds = [];
 
     nodes.map((node) => {
@@ -243,17 +245,25 @@ const renderNetwork = (dataNodes, dataEdges) => {
     });
     network.selectNodes(nodIds);
   };
+  //TODO: consolidate with network.on click handler
+  const nodeSelectionEventHandler = (nodeId, connectedNodes) => {
+    oldClickedNodeIds = oldClickedNodeIds.concat(
+      connectedNodes.nodeArray.filter((item) => oldClickedNodeIds.indexOf(item) < 0)
+    );
 
+    oldClickedEdgeIds = oldClickedEdgeIds.concat(
+      connectedNodes.edgeArray.filter((item) => oldClickedEdgeIds.indexOf(item) < 0)
+    );
+
+    onNodeClicked(nodeId, connectedNodes.allChildren);
+  };
   //click handler
   network.on('select', (properties) => {
     clearColorSelection();
     const clickedId = properties.nodes[0];
     const connectedNodes = showLinkedNodes(clickedId);
 
-    oldClickedNodeIds = connectedNodes.nodeArray;
-    oldClickedEdgeIds = connectedNodes.edgeArray;
-
-    onNodeClicked(properties.nodes, connectedNodes.allChildren);
+    nodeSelectionEventHandler(properties.nodes, connectedNodes);
   });
 
   network.on('hoverNode', (params) => {
@@ -285,6 +295,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
     showFilteredNodes: showFilteredNodes,
     resetNetwork: resetNetwork,
     highlightNodes: highlightNodes,
+    nodeSelectionEventHandler: nodeSelectionEventHandler,
   };
 };
 
