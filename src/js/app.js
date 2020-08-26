@@ -9,6 +9,8 @@ let allNodeNames = [];
 
 let data = {};
 const init = (rawData) => {
+  data.raw = JSON.parse(JSON.stringify(rawData));
+
   data.rawData = rawData;
   data.hierarchyFiltered = false;
   data.nodesFiltered = false;
@@ -102,6 +104,49 @@ const searchNode = (searchId) => {
 $('#network-search').submit(function (e) {
   e.preventDefault();
   searchNode($('#search-selector').data('key'));
+});
+
+//
+$('#createLargeSet').click(function (e) {
+  const iterate = (obj, suffix) => {
+    let x = '{';
+    for (const [key, value] of Object.entries(obj)) {
+      let omit = false;
+      if (
+        value === 'ROLE' ||
+        value === 'USER' ||
+        value === 'OWNERSHIP' ||
+        value === 'SECURITYADMIN' ||
+        value === 'DATABASE' ||
+        value === 'SCHEMA' ||
+        value === 'TABLE'
+      ) {
+        omit = true;
+      }
+      x += '""' + key + '""' + ':' + '""' + (omit ? value : value + suffix) + '""' + ',';
+    }
+    x = x.slice(0, -1);
+    x += '}';
+    return x;
+  };
+  let big = '';
+  for (let i = 0; i < 20; i++) {
+    let c = '';
+    let b = data.raw.forEach((e) => {
+      let x = '"';
+      x += iterate(e, i) + '"';
+      c += x;
+      c += '\n';
+    });
+    big += c;
+  }
+
+  big = big.slice(0, -1);
+
+  let csvContent = 'data:text/csv;charset=utf-8,' + 'GRANTS' + '\n' + big;
+
+  let encodedUri = encodeURI(csvContent);
+  window.open(encodedUri);
 });
 
 export { init, onNodeClicked, onNetworkReset, isNodesFiltered, isHierarchyFiltered };
