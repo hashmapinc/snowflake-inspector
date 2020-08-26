@@ -101,7 +101,15 @@ const searchNode = (searchId) => {
 };
 $('#network-search').submit(function (e) {
   e.preventDefault();
-  searchNode($('#search-selector').data('key'));
+  let searchString = $('#search-selector').val();
+  if (searchString) {
+    let searchObj = allNodeNames.filter((x) => x.label === searchString);
+
+    if (searchObj && searchObj.length > 0) {
+      searchNode(searchObj[0].value);
+    }
+  } else {
+  }
 });
 
 export { init, onNodeClicked, onNetworkReset, isNodesFiltered, isHierarchyFiltered };
