@@ -22,12 +22,10 @@ const init = (rawData) => {
 };
 const onNodeClicked = (currentNode, allChildren = []) => {
   if (currentNode.length > 0) {
-    if (!data.nodesFiltered) {
-      data.hierarchyFiltered = true;
-      const nodeArray = [];
-      nodeArray.push(currentNode[0]);
-      renderHierarchy(filterObjectsOnNodeClick(data.rawData, currentNode.concat(allChildren)));
-    }
+    data.hierarchyFiltered = true;
+    const nodeArray = [];
+    nodeArray.push(currentNode[0]);
+    renderHierarchy(filterObjectsOnNodeClick(data.rawData, currentNode.concat(allChildren)));
   } else if (data.hierarchyFiltered) {
     renderHierarchy(data.hierarchy);
     data.hierarchyFiltered = false;
