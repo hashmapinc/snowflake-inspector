@@ -13,6 +13,7 @@ const init = (rawData) => {
   data.renderedNetwork = renderNetwork(data.formattedData.nodes, data.formattedData.edges);
   renderHierarchy(data.hierarchy);
 };
+
 const onNodeClicked = (currentNode, allChildren = []) => {
   if (currentNode.length > 0) {
     if (!data.nodesFiltered) {
@@ -59,6 +60,7 @@ $('#hierarchy').on('select_node.jstree', function (e, jstreeObject) {
     data.nodesFiltered = true;
   }
 });
+
 $('#hierarchy-vis').click(function (e) {
   if (e.target.id === 'hierarchy-vis') {
     if (data.nodesFiltered) {
@@ -67,4 +69,22 @@ $('#hierarchy-vis').click(function (e) {
     }
   }
 });
+
+$('#fileinput').on('change', (e) => {
+  const defaultFileInputLabel = 'Download your query results as a CSV and upload here';
+
+  // get the file name
+  let fileName = null;
+  try {
+    fileName = e.target.files[0].name;
+  } catch (error) {
+  }
+
+  // generate file input label value
+  const fileInputLabel = fileName || defaultFileInputLabel;
+
+  // replace the file input label
+  $('#fileinput-label').html(fileInputLabel);
+})
+
 export { init, onNodeClicked, onNetworkReset, isNodesFiltered, isHierarchyFiltered };

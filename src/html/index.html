@@ -95,7 +95,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
-            Run this query in your Snowflake account and paste the result in the box below
+            Run this query in your Snowflake account and upload the result file below
           </h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -112,16 +112,18 @@
 
           <div class="mt-4">
             <div class="form-group">
-              <label>Paste the query output here</label>
-              <textarea class="form-control" name="result" id="data-input" rows="5" required="true"></textarea>
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="fileinput" accept=".csv">
+                <label class="custom-file-label" for="customFile" id="fileinput-label">Download your query results as a CSV and upload here</label>
+              </div>
             </div>
 
             <div class="alert alert-warning" role="alert" id="empty-query-results-warning">
-              Paste your query output above!
+              Upload the query results file!
             </div>
 
             <div class="alert alert-danger" role="alert" id="invalid-query-results-warning">
-              Invalid query output provided. Please double check the query and try again.
+              Invalid query output uploaded. Please double check the query and try again.
             </div>
 
             <div class="modal-footer">
