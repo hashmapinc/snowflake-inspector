@@ -12,21 +12,29 @@ const buildData = (json) => {
     rootType = {},
     dbRoot = {};
   json.forEach((element) => {
+    if (!element.toId) {
+      element.toId = element.GRANTED_TO_NAME + '___' + element.GRANTED_TO_TYPE;
+    }
+    if (!element.onId) {
+      element.onId = element.GRANTED_ON_NAME + '___' + element.GRANTED_ON_TYPE;
+    }
     if (
       element.GRANTED_ON_TYPE === 'ROLE' &&
       element.GRANTED_TO_NAME !== 'SECURITYADMIN' &&
       element.PRIVILEGE !== 'OWNERSHIP'
     ) {
-      const grantedToNodeIndex = data.nodes.findIndex((node) => node.name === element.GRANTED_TO_NAME);
+      const grantedToNodeIndex = data.nodes.findIndex((node) => node.id === element.toId);
       if (grantedToNodeIndex === -1) {
         data.nodes.push({
+          id: element.toId,
           name: element.GRANTED_TO_NAME,
           type: element.GRANTED_TO_TYPE,
         });
       }
-      const grantedOnNodeIndex = data.nodes.findIndex((node) => node.name === element.GRANTED_ON_NAME);
+      const grantedOnNodeIndex = data.nodes.findIndex((node) => node.id === element.onId);
       if (grantedOnNodeIndex === -1) {
         data.nodes.push({
+          id: element.onId,
           name: element.GRANTED_ON_NAME,
           type: element.GRANTED_ON_TYPE,
         });
@@ -36,8 +44,8 @@ const buildData = (json) => {
       );
       if (edgeIndex === -1)
         data.edges.push({
-          from: element.GRANTED_TO_NAME,
-          to: element.GRANTED_ON_NAME,
+          from: element.toId,
+          to: element.onId,
           arrows: 'to',
         });
     } else if (element.GRANTED_ON_DATABASE) {
@@ -188,9 +196,10 @@ const buildObjectNodeRelationship = (renderedNodes, filteredJson) => {
   let relatedData = [];
   filteredJson.forEach((element) => {
     if (element.GRANTED_TO_TYPE === 'ROLE' || element.GRANTED_TO_TYPE === 'USER') {
-      const grantedToNodeIndex = relatedData.findIndex((node) => node.name === element.GRANTED_TO_NAME);
+      const grantedToNodeIndex = relatedData.findIndex((node) => node.id === element.toId);
       if (grantedToNodeIndex === -1) {
         relatedData.push({
+          id: element.toId,
           name: element.GRANTED_TO_NAME,
           type: element.GRANTED_TO_TYPE,
         });
@@ -199,14 +208,12 @@ const buildObjectNodeRelationship = (renderedNodes, filteredJson) => {
   });
 
   //Return nodes that are related to provided filtered json
-  return renderedNodes.filter((node) => relatedData.some((item) => item.name === node.name));
+  return renderedNodes.filter((node) => relatedData.some((item) => item.id === node.id));
 };
 
 const filterObjectsOnNodeClick = (json, nodes = []) => {
   let filteredJson = json.filter((element) => {
-    return nodes.filter((node) => node === element.GRANTED_TO_NAME && element.GRANTED_TO_TYPE === 'ROLE').length > 0
-      ? true
-      : false;
+    return nodes.filter((node) => node === element.toId).length > 0 ? true : false;
   });
   const x = buildData(filteredJson);
   return x.hierarchy;
