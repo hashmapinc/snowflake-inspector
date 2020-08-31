@@ -3,9 +3,11 @@ import * as app from './app';
 import dataQuery from '../data/data_query.sql';
 
 let queryResults = null;
+
 // handle modal submit
 function onNewVisSubmit() {
   $('#fileinput').trigger('change');
+
   // remove old warnings
   hideAllWarnings();
   if (!queryResults) {
@@ -23,6 +25,7 @@ function onNewVisSubmit() {
     }
   }
 }
+
 //hide warning on modal open
 $('#create-vis-modal').on('shown.bs.modal', function (e) {
   hideAllWarnings();
@@ -32,6 +35,7 @@ function hideAllWarnings() {
   $('#invalid-query-results-warning').hide();
   $('#empty-query-results-warning').hide();
 }
+
 // handle copy button select
 function onCopyQueryClick() {
   // Select the query element and copy it's contents
@@ -57,15 +61,15 @@ export default function initModal() {
 }
 
 const csvStringToArray = (strData) => {
+  // Check for new line, comma, tab as a delimiter to find the the pattern
   const objPattern = new RegExp('(\\,|\\r?\\n|\\r|^)(?:"([^"]*(?:""[^"]*)*)"|([^\\,\\r\\n]*))', 'gi');
-  // Create an array to hold our individual pattern
-  // matching groups.
+
+  // Create an array to hold our individual pattern matching groups.
   let arrMatches = null,
-    // Create an array to hold our data. Give the array
-    // a default empty first row.
+    // Create an array to hold our data. Give the array a default empty first row.
     arrData = [[]];
-  // Keep looping over the regular expression matches
-  // until we can no longer find a match.
+
+  // Keep looping over the regular expression matches until we can no longer find a match.
   while ((arrMatches = objPattern.exec(strData))) {
     if (arrMatches[1].length && arrMatches[1] !== '\\') arrData.push([]);
     arrData[arrData.length - 1].push(arrMatches[2] ? arrMatches[2].replace(new RegExp('""', 'g'), '"') : arrMatches[3]);
@@ -73,14 +77,15 @@ const csvStringToArray = (strData) => {
   return arrData;
 };
 
-function readSingleFile(evt) {
-  let f = evt.target.files[0];
-  if (f) {
-    let r = new FileReader();
-    r.onload = function (e) {
+function readSingleFile(event) {
+  let file = event.target.files[0];
+  if (file) {
+    let fileReader = new FileReader();
+    fileReader.onload = function (e) {
       let contents = e.target.result;
       let lines = csvStringToArray(contents);
-      //remove 1st element
+
+      //remove 1st element which is the header of CSV file
       const firstElement = lines.shift();
 
       try {
@@ -101,7 +106,7 @@ function readSingleFile(evt) {
         $('#invalid-query-results-warning').show();
       }
     };
-    r.readAsText(f);
+    fileReader.readAsText(file);
   }
 }
 

@@ -8,6 +8,7 @@ import '../../node_modules/jquery-ui-dist/jquery-ui.min.css';
 let allNodeNames = [];
 
 let data = {};
+
 const init = (rawData) => {
   data.rawData = rawData;
   data.hierarchyFiltered = false;
@@ -15,6 +16,8 @@ const init = (rawData) => {
   data.formattedData = buildData(rawData);
   data.hierarchy = data.formattedData.hierarchy;
   data.renderedNetwork = renderNetwork(data.formattedData.nodes, data.formattedData.edges);
+
+  // Nodes are each items on the network on the home page. They are either Roles or Users
   data.formattedData.nodes.map((x) => {
     allNodeNames.push({ label: x.name, value: x.id });
   });
@@ -26,6 +29,8 @@ const onNodeClicked = (currentNode, allChildren = []) => {
     data.hierarchyFiltered = true;
     const nodeArray = [];
     nodeArray.push(currentNode[0]);
+
+    // Filter objects based on currently clicked node and theyir children before rendering the Object hierarchy
     renderHierarchy(filterObjectsOnNodeClick(data.rawData, currentNode.concat(allChildren)));
   } else if (data.hierarchyFiltered) {
     renderHierarchy(data.hierarchy);
@@ -101,6 +106,7 @@ const searchNode = (searchId) => {
 
   data.nodesFiltered = true;
 };
+
 $('#network-search').submit(function (e) {
   e.preventDefault();
   let searchString = $('#search-selector').val();
@@ -113,6 +119,7 @@ $('#network-search').submit(function (e) {
   } else {
   }
 });
+
 $('#fileinput').on('change', (e) => {
   const defaultFileInputLabel = 'Download your query results as a CSV and upload here';
 

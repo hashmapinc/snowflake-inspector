@@ -11,6 +11,7 @@ const buildData = (json) => {
     other = {},
     rootType = {},
     dbRoot = {};
+
   json.forEach((element) => {
     if (!element.toId) {
       element.toId = element.GRANTED_TO_NAME + '___' + element.GRANTED_TO_TYPE;
@@ -51,7 +52,6 @@ const buildData = (json) => {
     } else if (element.GRANTED_ON_DATABASE) {
       const dbRootIndex = data.hierarchy.findIndex((database) => database.text === 'DATABASE');
       dbRoot = data.hierarchy[dbRootIndex];
-
       const dbIndex = dbRoot.children.findIndex((db) => db.text === element.GRANTED_ON_DATABASE);
       database =
         dbIndex !== -1
@@ -218,4 +218,5 @@ const filterObjectsOnNodeClick = (json, nodes = []) => {
   const x = buildData(filteredJson);
   return x.hierarchy;
 };
+
 export { buildData, filterNodes, filterObjectsOnNodeClick };

@@ -105,6 +105,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
     network.setData(data);
   };
 
+  /* This is collection of functions used for getting child nodes, parents, all connected nodes, highlighting them */
   const showLinkedNodes = (
     nodeId,
     parentsOnly = false,
@@ -115,6 +116,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
   ) => {
     let allChildren = [];
     let allParents = [];
+
     const selectNodesRecursively = (connectedNodes, direction, background, border) => {
       if (connectedNodes) {
         connectedNodes.forEach((child) => {
@@ -201,6 +203,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
     };
   };
 
+  // clear all the colors that was applied for highlighting
   const clearColorSelection = () => {
     if (oldClickedNodeIds && oldClickedNodeIds.length > 0) {
       let oldNodes = nodes.get(oldClickedNodeIds);
@@ -245,8 +248,10 @@ const renderNetwork = (dataNodes, dataEdges) => {
     });
     network.selectNodes(nodIds);
   };
+
   //TODO: consolidate with network.on click handler
   const nodeSelectionEventHandler = (nodeId, connectedNodes) => {
+    // Add to the list of highlighted nodes so that It can be tracked and cleared later.
     oldClickedNodeIds = oldClickedNodeIds.concat(
       connectedNodes.nodeArray.filter((item) => oldClickedNodeIds.indexOf(item) < 0)
     );
@@ -257,6 +262,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
 
     onNodeClicked(nodeId, connectedNodes.allChildren);
   };
+
   //click handler
   network.on('select', (properties) => {
     clearColorSelection();
@@ -269,6 +275,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
   network.on('hoverNode', (params) => {
     network.canvas.body.container.style.cursor = 'pointer';
   });
+
   network.on('blurNode', (params) => {
     network.canvas.body.container.style.cursor = 'default';
   });
@@ -290,6 +297,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
   window.onresize = () => {
     network.fit();
   };
+
   return {
     showLinkedNodes: showLinkedNodes,
     showFilteredNodes: showFilteredNodes,
