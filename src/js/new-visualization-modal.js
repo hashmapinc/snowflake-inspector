@@ -102,8 +102,6 @@ function readSingleFile(evt) {
       }
     };
     r.readAsText(f);
-  } else {
-    alert('Failed to load file');
   }
 }
 
