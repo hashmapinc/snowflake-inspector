@@ -16,7 +16,6 @@ function onNewVisSubmit() {
     $('#create-vis-modal').modal('toggle');
   } catch (error) {
     $('#invalid-query-results-warning').show();
-    alert(
   }
 }
 //hide warning on modal open
