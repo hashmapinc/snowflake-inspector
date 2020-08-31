@@ -5,17 +5,22 @@ import dataQuery from '../data/data_query.sql';
 let queryResults = null;
 // handle modal submit
 function onNewVisSubmit() {
+  $('#fileinput').trigger('change');
   // remove old warnings
   hideAllWarnings();
   if (!queryResults) {
-    $('#empty-query-results-warning').show();
-  }
-
-  try {
-    app.init(queryResults);
-    $('#create-vis-modal').modal('toggle');
-  } catch (error) {
-    $('#invalid-query-results-warning').show();
+    if ($('#fileinput').val()) {
+      $('#invalid-query-results-warning').show();
+    } else {
+      $('#empty-query-results-warning').show();
+    }
+  } else {
+    try {
+      app.init(queryResults);
+      $('#create-vis-modal').modal('toggle');
+    } catch (error) {
+      $('#invalid-query-results-warning').show();
+    }
   }
 }
 //hide warning on modal open
@@ -75,14 +80,24 @@ function readSingleFile(evt) {
     r.onload = function (e) {
       let contents = e.target.result;
       let lines = csvStringToArray(contents);
-      lines.shift();
+      //remove 1st element
+      const firstElement = lines.shift();
 
       try {
-        queryResults = lines.map((line) => {
-          return JSON.parse(line);
-        });
-        hideAllWarnings();
+        if (firstElement[0] === 'GRANT_OBJ') {
+          queryResults = lines.map((line) => {
+            return JSON.parse(line);
+          });
+          hideAllWarnings();
+        } else {
+          hideAllWarnings();
+          $('#invalid-query-results-warning').show();
+          queryResults = null;
+        }
       } catch (error) {
+        queryResults = null;
+        hideAllWarnings();
+
         $('#invalid-query-results-warning').show();
       }
     };
@@ -91,4 +106,5 @@ function readSingleFile(evt) {
     alert('Failed to load file');
   }
 }
-document.getElementById('fileinput').addEventListener('change', readSingleFile);
+
+$('#fileinput').on('change', readSingleFile);
