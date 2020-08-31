@@ -17,8 +17,6 @@ function onNewVisSubmit() {
   } catch (error) {
     $('#invalid-query-results-warning').show();
     alert(
-      "Whoops! We couldn't parse your results. Please double check your query and try again. Please submit feedback if you believe this is a bug."
-    );
   }
 }
 //hide warning on modal open
@@ -87,9 +85,6 @@ function readSingleFile(evt) {
         hideAllWarnings();
       } catch (error) {
         $('#invalid-query-results-warning').show();
-        alert(
-          "Whoops! We couldn't parse your results. Please double check your query and try again. Please submit feedback if you believe this is a bug."
-        );
       }
     };
     r.readAsText(f);
