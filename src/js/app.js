@@ -17,7 +17,7 @@ const init = (rawData) => {
   data.hierarchy = data.formattedData.hierarchy;
   data.renderedNetwork = renderNetwork(data.formattedData.nodes, data.formattedData.edges);
 
-  // Nodes are each items on the network on the home page. They are either Roles or Users
+  // Nodes are each items on the network on the home page. They are either Roles or Users. Extracting names and Id's from each node for autosuggest
   data.formattedData.nodes.map((x) => {
     allNodeNames.push({ label: x.name, value: x.id });
   });
