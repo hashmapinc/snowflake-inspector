@@ -39,7 +39,7 @@ const options = {
   },
 };
 
-// create state arrays for click handling
+// create state arrays for making keeping track of highlighted nodes
 let oldClickedNodeIds = [];
 let oldClickedEdgeIds = [];
 
@@ -235,6 +235,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
       });
       edges.update(oldClickedEdgeIds);
     }
+    // reset state after all the nodes highlighting is removed
     oldClickedNodeIds = [];
     oldClickedEdgeIds = [];
   };
@@ -282,6 +283,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
 
   network.on('click', (event) => {
     if (event.nodes.length === 0) {
+      // when clicked on the empty canvas in the network area, reset the network
       if (event.edges.length === 0 && isNodesFiltered()) {
         network.setData(data);
         network.redraw();

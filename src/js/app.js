@@ -24,14 +24,12 @@ const init = (rawData) => {
   renderHierarchy(data.hierarchy);
 };
 
-const onNodeClicked = (currentNode, allChildren = []) => {
-  if (currentNode.length > 0) {
+const onNodeClicked = (currentNodeIds, allChildren = []) => {
+  if (currentNodeIds.length > 0) {
     data.hierarchyFiltered = true;
-    const nodeArray = [];
-    nodeArray.push(currentNode[0]);
 
     // Filter objects based on currently clicked node and theyir children before rendering the Object hierarchy
-    renderHierarchy(filterObjectsOnNodeClick(data.rawData, currentNode.concat(allChildren)));
+    renderHierarchy(filterObjectsOnNodeClick(data.rawData, currentNodeIds.concat(allChildren)));
   } else if (data.hierarchyFiltered) {
     renderHierarchy(data.hierarchy);
     data.hierarchyFiltered = false;
@@ -95,6 +93,8 @@ const searchNode = (searchId) => {
 
   let connectedNodeIds = [searchId];
   let connectedNodes = data.renderedNetwork.showLinkedNodes(searchId);
+
+  // Add all the connected nodes to the searched node. Needed for filtering and highlighting searched node
   connectedNodes.nodeArray.map((id) => {
     if (connectedNodeIds.indexOf(id) === -1) {
       connectedNodeIds.push(id);
