@@ -1,6 +1,7 @@
 import { ICONS } from './constants';
 
 let rendered = false;
+
 const renderHierarchy = (tree) => {
   if (!rendered) {
     $('#hierarchy').jstree({

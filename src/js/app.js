@@ -1,6 +1,11 @@
 import { buildData, filterObjectsOnNodeClick, filterNodes } from './data-builder';
 import renderNetwork from './network-vis';
 import renderHierarchy from './hierarchy-vis';
+import '../../node_modules/jquery-ui-dist/jquery-ui';
+import '../../node_modules/jquery-ui-dist/jquery-ui.min.css';
+
+// Needed for node search functionality
+let allNodeNames = [];
 
 let data = {};
 
@@ -11,17 +16,20 @@ const init = (rawData) => {
   data.formattedData = buildData(rawData);
   data.hierarchy = data.formattedData.hierarchy;
   data.renderedNetwork = renderNetwork(data.formattedData.nodes, data.formattedData.edges);
+
+  // Nodes are each items on the network on the home page. They are either Roles or Users. Extracting names and Id's from each node for autosuggest
+  data.formattedData.nodes.map((x) => {
+    allNodeNames.push({ label: x.name, value: x.id });
+  });
   renderHierarchy(data.hierarchy);
 };
 
-const onNodeClicked = (currentNode, allChildren = []) => {
-  if (currentNode.length > 0) {
-    if (!data.nodesFiltered) {
-      data.hierarchyFiltered = true;
-      const nodeArray = [];
-      nodeArray.push(currentNode[0]);
-      renderHierarchy(filterObjectsOnNodeClick(data.rawData, currentNode.concat(allChildren)));
-    }
+const onNodeClicked = (currentNodeIds, allChildren = []) => {
+  if (currentNodeIds.length > 0) {
+    data.hierarchyFiltered = true;
+
+    // Filter objects based on currently clicked node and theyir children before rendering the Object hierarchy
+    renderHierarchy(filterObjectsOnNodeClick(data.rawData, currentNodeIds.concat(allChildren)));
   } else if (data.hierarchyFiltered) {
     renderHierarchy(data.hierarchy);
     data.hierarchyFiltered = false;
@@ -70,6 +78,48 @@ $('#hierarchy-vis').click(function (e) {
   }
 });
 
+$('#search-selector').autocomplete({
+  source: allNodeNames,
+  select: (e, ui) => {
+    e.preventDefault();
+    $('#search-selector').val(ui.item.label);
+    $('#search-selector').data('key', ui.item.value);
+    searchNode(ui.item.value);
+  },
+});
+
+const searchNode = (searchId) => {
+  data.renderedNetwork.resetNetwork();
+
+  let connectedNodeIds = [searchId];
+  let connectedNodes = data.renderedNetwork.showLinkedNodes(searchId);
+
+  // Add all the connected nodes to the searched node. Needed for filtering and highlighting searched node
+  connectedNodes.nodeArray.map((id) => {
+    if (connectedNodeIds.indexOf(id) === -1) {
+      connectedNodeIds.push(id);
+    }
+  });
+  data.renderedNetwork.showFilteredNodes(connectedNodeIds);
+  data.renderedNetwork.highlightNodes([{ id: searchId }], false);
+  data.renderedNetwork.nodeSelectionEventHandler([searchId], connectedNodes);
+
+  data.nodesFiltered = true;
+};
+
+$('#network-search').submit(function (e) {
+  e.preventDefault();
+  let searchString = $('#search-selector').val();
+  if (searchString) {
+    let searchObj = allNodeNames.filter((x) => x.label === searchString);
+
+    if (searchObj && searchObj.length > 0) {
+      searchNode(searchObj[0].value);
+    }
+  } else {
+  }
+});
+
 $('#fileinput').on('change', (e) => {
   const defaultFileInputLabel = 'Download your query results as a CSV and upload here';
 
@@ -77,14 +127,13 @@ $('#fileinput').on('change', (e) => {
   let fileName = null;
   try {
     fileName = e.target.files[0].name;
-  } catch (error) {
-  }
+  } catch (error) {}
 
   // generate file input label value
   const fileInputLabel = fileName || defaultFileInputLabel;
 
   // replace the file input label
   $('#fileinput-label').html(fileInputLabel);
-})
+});
 
 export { init, onNodeClicked, onNetworkReset, isNodesFiltered, isHierarchyFiltered };

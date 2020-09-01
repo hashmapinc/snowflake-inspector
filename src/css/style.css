@@ -2,10 +2,11 @@
   width: 100%;
   height: 90vh;
   overflow: hidden;
+  margin-top: -1em;
 }
 
 #hierarchy-vis {
-  margin-top: 5em;
+  margin-top: -4em;
   width: 100%;
   height: 90vh;
   overflow: scroll;
@@ -33,4 +34,26 @@
 
 .jstree-icon {
   color: cornflowerblue;
+}
+
+.form-control:focus {
+  box-shadow: none;
+}
+
+.form-control-underlined {
+  border-width: 0;
+  border-bottom-width: 1px;
+  border-radius: 0;
+  padding-left: 0;
+}
+
+.form-control::placeholder {
+  font-size: 0.95rem;
+  color: #aaa;
+  font-style: italic;
+}
+
+.search-bar {
+  margin-top: 5em;
+  margin-left: 15em;
 }

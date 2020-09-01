@@ -39,7 +39,7 @@ const options = {
   },
 };
 
-// create state arrays for click handling
+// create state arrays for making keeping track of highlighted nodes
 let oldClickedNodeIds = [];
 let oldClickedEdgeIds = [];
 
@@ -90,10 +90,10 @@ const renderNetwork = (dataNodes, dataEdges) => {
   // initialize network!
   let network = new Network(networkVisDiv, data, options);
 
-  const showFilteredNodes = (filterArray) => {
+  const showFilteredNodes = (filteredNodeIds) => {
     var view = new DataView(nodes, {
       filter: (item) => {
-        return filterArray.indexOf(item.id) !== -1;
+        return filteredNodeIds.indexOf(item.id) !== -1;
       },
     });
 
@@ -105,6 +105,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
     network.setData(data);
   };
 
+  /* This is collection of functions used for getting child nodes, parents, all connected nodes, highlighting them */
   const showLinkedNodes = (
     nodeId,
     parentsOnly = false,
@@ -115,6 +116,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
   ) => {
     let allChildren = [];
     let allParents = [];
+
     const selectNodesRecursively = (connectedNodes, direction, background, border) => {
       if (connectedNodes) {
         connectedNodes.forEach((child) => {
@@ -201,8 +203,9 @@ const renderNetwork = (dataNodes, dataEdges) => {
     };
   };
 
+  // clear all the colors that was applied for highlighting
   const clearColorSelection = () => {
-    if (oldClickedNodeIds.length > 0) {
+    if (oldClickedNodeIds && oldClickedNodeIds.length > 0) {
       let oldNodes = nodes.get(oldClickedNodeIds);
       oldNodes.forEach((node) => {
         node.color = {
@@ -220,7 +223,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
       });
       nodes.update(oldNodes);
     }
-    if (oldClickedEdgeIds.length > 0) {
+    if (oldClickedEdgeIds && oldClickedEdgeIds.length > 0) {
       oldClickedEdgeIds.forEach((edge) => {
         edge.color = {
           color: COLORS.edge,
@@ -232,10 +235,13 @@ const renderNetwork = (dataNodes, dataEdges) => {
       });
       edges.update(oldClickedEdgeIds);
     }
+    // reset state after all the nodes highlighting is removed
+    oldClickedNodeIds = [];
+    oldClickedEdgeIds = [];
   };
 
-  const highlightNodes = (nodes) => {
-    clearColorSelection();
+  const highlightNodes = (nodes, clearSelection = true) => {
+    if (clearSelection) clearColorSelection();
     let nodIds = [];
 
     nodes.map((node) => {
@@ -244,27 +250,40 @@ const renderNetwork = (dataNodes, dataEdges) => {
     network.selectNodes(nodIds);
   };
 
+  //TODO: consolidate with network.on click handler
+  const nodeSelectionEventHandler = (nodeId, connectedNodes) => {
+    // Add to the list of highlighted nodes so that It can be tracked and cleared later.
+    oldClickedNodeIds = oldClickedNodeIds.concat(
+      connectedNodes.nodeArray.filter((item) => oldClickedNodeIds.indexOf(item) < 0)
+    );
+
+    oldClickedEdgeIds = oldClickedEdgeIds.concat(
+      connectedNodes.edgeArray.filter((item) => oldClickedEdgeIds.indexOf(item) < 0)
+    );
+
+    onNodeClicked(nodeId, connectedNodes.allChildren);
+  };
+
   //click handler
   network.on('select', (properties) => {
     clearColorSelection();
     const clickedId = properties.nodes[0];
     const connectedNodes = showLinkedNodes(clickedId);
 
-    oldClickedNodeIds = connectedNodes.nodeArray;
-    oldClickedEdgeIds = connectedNodes.edgeArray;
-
-    onNodeClicked(properties.nodes, connectedNodes.allChildren);
+    nodeSelectionEventHandler(properties.nodes, connectedNodes);
   });
 
   network.on('hoverNode', (params) => {
     network.canvas.body.container.style.cursor = 'pointer';
   });
+
   network.on('blurNode', (params) => {
     network.canvas.body.container.style.cursor = 'default';
   });
 
   network.on('click', (event) => {
     if (event.nodes.length === 0) {
+      // when clicked on the empty canvas in the network area, reset the network
       if (event.edges.length === 0 && isNodesFiltered()) {
         network.setData(data);
         network.redraw();
@@ -280,11 +299,13 @@ const renderNetwork = (dataNodes, dataEdges) => {
   window.onresize = () => {
     network.fit();
   };
+
   return {
     showLinkedNodes: showLinkedNodes,
     showFilteredNodes: showFilteredNodes,
     resetNetwork: resetNetwork,
     highlightNodes: highlightNodes,
+    nodeSelectionEventHandler: nodeSelectionEventHandler,
   };
 };
 

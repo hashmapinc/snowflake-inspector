@@ -11,7 +11,9 @@ const buildData = (json) => {
     other = {},
     rootType = {},
     dbRoot = {};
+
   json.forEach((element) => {
+    // Create unique id by combining name and type so that Roles and Uses with same name can be differentiated
     if (!element.toId) {
       element.toId = element.GRANTED_TO_NAME + '___' + element.GRANTED_TO_TYPE;
     }
@@ -51,7 +53,6 @@ const buildData = (json) => {
     } else if (element.GRANTED_ON_DATABASE) {
       const dbRootIndex = data.hierarchy.findIndex((database) => database.text === 'DATABASE');
       dbRoot = data.hierarchy[dbRootIndex];
-
       const dbIndex = dbRoot.children.findIndex((db) => db.text === element.GRANTED_ON_DATABASE);
       database =
         dbIndex !== -1
@@ -211,11 +212,12 @@ const buildObjectNodeRelationship = (renderedNodes, filteredJson) => {
   return renderedNodes.filter((node) => relatedData.some((item) => item.id === node.id));
 };
 
-const filterObjectsOnNodeClick = (json, nodes = []) => {
+const filterObjectsOnNodeClick = (json, nodeIds = []) => {
   let filteredJson = json.filter((element) => {
-    return nodes.filter((node) => node === element.toId).length > 0 ? true : false;
+    return nodeIds.filter((nodeId) => nodeId === element.toId).length > 0 ? true : false;
   });
   const x = buildData(filteredJson);
   return x.hierarchy;
 };
+
 export { buildData, filterNodes, filterObjectsOnNodeClick };
