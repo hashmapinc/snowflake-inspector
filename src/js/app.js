@@ -4,10 +4,8 @@ import renderHierarchy from './hierarchy-vis';
 import '../../node_modules/jquery-ui-dist/jquery-ui';
 import '../../node_modules/jquery-ui-dist/jquery-ui.min.css';
 
-// Needed for node search functionality
-let allNodeNames = [];
-
 let data = {};
+
 const init = (rawData) => {
   data.rawData = rawData;
   data.hierarchyFiltered = false;
@@ -15,19 +13,16 @@ const init = (rawData) => {
   data.formattedData = buildData(rawData);
   data.hierarchy = data.formattedData.hierarchy;
   data.renderedNetwork = renderNetwork(data.formattedData.nodes, data.formattedData.edges);
-  data.formattedData.nodes.map((x) => {
-    allNodeNames.push({ label: x.name, value: x.id });
-  });
   renderHierarchy(data.hierarchy);
+  initializeSearch();
 };
-const onNodeClicked = (currentNode, allChildren = []) => {
-  if (currentNode.length > 0) {
-    if (!data.nodesFiltered) {
-      data.hierarchyFiltered = true;
-      const nodeArray = [];
-      nodeArray.push(currentNode[0]);
-      renderHierarchy(filterObjectsOnNodeClick(data.rawData, currentNode.concat(allChildren)));
-    }
+
+const onNodeClicked = (currentNodeIds, allChildren = []) => {
+  if (currentNodeIds.length > 0) {
+    data.hierarchyFiltered = true;
+
+    // Filter objects based on currently clicked node and theyir children before rendering the Object hierarchy
+    renderHierarchy(filterObjectsOnNodeClick(data.rawData, currentNodeIds.concat(allChildren)));
   } else if (data.hierarchyFiltered) {
     renderHierarchy(data.hierarchy);
     data.hierarchyFiltered = false;
@@ -66,6 +61,7 @@ $('#hierarchy').on('select_node.jstree', function (e, jstreeObject) {
     data.nodesFiltered = true;
   }
 });
+
 $('#hierarchy-vis').click(function (e) {
   if (e.target.id === 'hierarchy-vis') {
     if (data.nodesFiltered) {
@@ -75,21 +71,45 @@ $('#hierarchy-vis').click(function (e) {
   }
 });
 
-$('#search-selector').autocomplete({
-  source: allNodeNames,
-  select: (e, ui) => {
-    e.preventDefault();
-    $('#search-selector').val(ui.item.label);
-    $('#search-selector').data('key', ui.item.value);
-    searchNode(ui.item.value);
-  },
-});
+// Provide data for search functionality to the jQuery functions.
+const initializeSearch = () => {
+  let allNodeNames = [];
+  // Nodes are each items on the network on the home page. They are either Roles or Users. Extracting names and Id's from each node for autosuggest
+  data.formattedData.nodes.map((x) => {
+    allNodeNames.push({ label: x.name, value: x.id });
+  });
+
+  $('#search-selector').autocomplete({
+    source: allNodeNames,
+    select: (event, ui) => {
+      event.preventDefault();
+      $('#search-selector').val(ui.item.label);
+      $('#search-selector').data('key', ui.item.value);
+      searchNode(ui.item.value);
+    },
+  });
+
+  $('#network-search').submit(function (event) {
+    event.preventDefault();
+    let searchString = $('#search-selector').val();
+    if (searchString) {
+      // When searched, users see name of the noe, but node object with ID and name is needed to actually search.
+      let searchObj = allNodeNames.filter((node) => node.label === searchString);
+
+      if (searchObj && searchObj.length > 0) {
+        searchNode(searchObj[0].value);
+      }
+    }
+  });
+};
 
 const searchNode = (searchId) => {
   data.renderedNetwork.resetNetwork();
 
   let connectedNodeIds = [searchId];
   let connectedNodes = data.renderedNetwork.showLinkedNodes(searchId);
+
+  // Add all the connected nodes to the searched node. Needed for filtering and highlighting searched node
   connectedNodes.nodeArray.map((id) => {
     if (connectedNodeIds.indexOf(id) === -1) {
       connectedNodeIds.push(id);
@@ -101,9 +121,21 @@ const searchNode = (searchId) => {
 
   data.nodesFiltered = true;
 };
-$('#network-search').submit(function (e) {
-  e.preventDefault();
-  searchNode($('#search-selector').data('key'));
+
+$('#fileinput').on('change', (event) => {
+  const defaultFileInputLabel = 'Download your query results as a CSV and upload here';
+
+  // get the file name
+  let fileName = null;
+  try {
+    fileName = event.target.files[0].name;
+  } catch (error) {}
+
+  // generate file input label value
+  const fileInputLabel = fileName || defaultFileInputLabel;
+
+  // replace the file input label
+  $('#fileinput-label').html(fileInputLabel);
 });
 
 export { init, onNodeClicked, onNetworkReset, isNodesFiltered, isHierarchyFiltered };
