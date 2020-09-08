@@ -4,9 +4,6 @@ import renderHierarchy from './hierarchy-vis';
 import '../../node_modules/jquery-ui-dist/jquery-ui';
 import '../../node_modules/jquery-ui-dist/jquery-ui.min.css';
 
-// Needed for node search functionality
-let allNodeNames = [];
-
 let data = {};
 
 const init = (rawData) => {
@@ -16,12 +13,8 @@ const init = (rawData) => {
   data.formattedData = buildData(rawData);
   data.hierarchy = data.formattedData.hierarchy;
   data.renderedNetwork = renderNetwork(data.formattedData.nodes, data.formattedData.edges);
-
-  // Nodes are each items on the network on the home page. They are either Roles or Users. Extracting names and Id's from each node for autosuggest
-  data.formattedData.nodes.map((x) => {
-    allNodeNames.push({ label: x.name, value: x.id });
-  });
   renderHierarchy(data.hierarchy);
+  initializeSearch();
 };
 
 const onNodeClicked = (currentNodeIds, allChildren = []) => {
@@ -78,15 +71,37 @@ $('#hierarchy-vis').click(function (e) {
   }
 });
 
-$('#search-selector').autocomplete({
-  source: allNodeNames,
-  select: (e, ui) => {
-    e.preventDefault();
-    $('#search-selector').val(ui.item.label);
-    $('#search-selector').data('key', ui.item.value);
-    searchNode(ui.item.value);
-  },
-});
+// Provide data for search functionality to the jQuery functions.
+const initializeSearch = () => {
+  let allNodeNames = [];
+  // Nodes are each items on the network on the home page. They are either Roles or Users. Extracting names and Id's from each node for autosuggest
+  data.formattedData.nodes.map((x) => {
+    allNodeNames.push({ label: x.name, value: x.id });
+  });
+
+  $('#search-selector').autocomplete({
+    source: allNodeNames,
+    select: (event, ui) => {
+      event.preventDefault();
+      $('#search-selector').val(ui.item.label);
+      $('#search-selector').data('key', ui.item.value);
+      searchNode(ui.item.value);
+    },
+  });
+
+  $('#network-search').submit(function (event) {
+    event.preventDefault();
+    let searchString = $('#search-selector').val();
+    if (searchString) {
+      // When searched, users see name of the noe, but node object with ID and name is needed to actually search.
+      let searchObj = allNodeNames.filter((node) => node.label === searchString);
+
+      if (searchObj && searchObj.length > 0) {
+        searchNode(searchObj[0].value);
+      }
+    }
+  });
+};
 
 const searchNode = (searchId) => {
   data.renderedNetwork.resetNetwork();
@@ -107,26 +122,13 @@ const searchNode = (searchId) => {
   data.nodesFiltered = true;
 };
 
-$('#network-search').submit(function (e) {
-  e.preventDefault();
-  let searchString = $('#search-selector').val();
-  if (searchString) {
-    let searchObj = allNodeNames.filter((x) => x.label === searchString);
-
-    if (searchObj && searchObj.length > 0) {
-      searchNode(searchObj[0].value);
-    }
-  } else {
-  }
-});
-
-$('#fileinput').on('change', (e) => {
+$('#fileinput').on('change', (event) => {
   const defaultFileInputLabel = 'Download your query results as a CSV and upload here';
 
   // get the file name
   let fileName = null;
   try {
-    fileName = e.target.files[0].name;
+    fileName = event.target.files[0].name;
   } catch (error) {}
 
   // generate file input label value
