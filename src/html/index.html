@@ -140,6 +140,10 @@
             <div id="hierarchy"></div>
           </div>
         </div>
+        <div class="card sticky-top" id="filter-card">
+          <div class="card-header" id="privilege-header"></div>
+          <div id="checks" class="privilege-checkboxes"></div>
+        </div>
       </div>
     </main>
 
@@ -148,9 +152,7 @@
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">
-              Run this query in your Snowflake account and upload the result file below
-            </h5>
+            <h5 class="modal-title">Run this query in your Snowflake account and upload the result file below</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -184,12 +186,8 @@
               </div>
 
               <div class="modal-footer">
-                <button class="btn btn-secondary btn-round" data-dismiss="modal">
-                  Close
-                </button>
-                <button class="btn btn-primary btn-round" id="new-vis-button">
-                  Visualize
-                </button>
+                <button class="btn btn-secondary btn-round" data-dismiss="modal">Close</button>
+                <button class="btn btn-primary btn-round" id="new-vis-button">Visualize</button>
               </div>
             </div>
           </div>

@@ -57,3 +57,18 @@
   margin-top: 6em;
   margin-left: 15em;
 }
+
+#filter-card {
+  position: fixed;
+  left: 0px;
+  top: 75px;
+  height: 500px;
+  width: 250px;
+  z-index: 999999;
+  display: none;
+  overflow: scroll;
+}
+
+.privilege-checkboxes {
+  overflow: scroll;
+}
