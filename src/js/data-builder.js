@@ -3,6 +3,7 @@ const buildData = (json) => {
   data.nodes = [];
   data.edges = [];
   data.hierarchy = [{ text: 'DATABASE', children: [], type: 'DATABASE' }];
+  data.privileges = [];
 
   let database = [],
     schema = {},
@@ -20,6 +21,12 @@ const buildData = (json) => {
     if (!element.onId) {
       element.onId = element.GRANTED_ON_NAME + '___' + element.GRANTED_ON_TYPE;
     }
+
+    //check if current element privilege is already exists in the list of privileges
+    if (!data.privileges.includes(element.PRIVILEGE)) {
+      data.privileges.push(element.PRIVILEGE);
+    }
+
     if (
       element.GRANTED_ON_TYPE === 'ROLE' &&
       element.GRANTED_TO_NAME !== 'SECURITYADMIN' &&
@@ -110,11 +117,11 @@ const buildData = (json) => {
       otherIndex === -1 ? rootType.children.push(other) : (rootType.children[otherIndex] = other);
     }
   });
-
+  data.privileges.sort();
   return data;
 };
 
-const filterNodes = (formattedData, json, jstreeObject) => {
+const filterNodes = (formattedData, json, jstreeObject, selectedprivileges = []) => {
   let filteredJson = [];
   const jstreeData = jstreeObject.instance.get_json('#', { flat: true });
   const selectedObj = jstreeObject.instance.get_node(jstreeObject.selected[0]);
@@ -136,55 +143,58 @@ const filterNodes = (formattedData, json, jstreeObject) => {
   filteredJson = json.filter((element) => {
     if (element.GRANTED_ON_TYPE !== 'ROLE' || element.GRANTED_ON_TYPE !== 'USER') {
       if (element.GRANTED_ON_TYPE === selectedObj.type) {
-        if (selectedObj.parent !== '#') {
-          if (element.GRANTED_ON_DATABASE && levelsData[0] != null && levelsData[0].type === 'DATABASE') {
-            if (
-              levelsData[1] != null &&
-              levelsData[1].type === 'DATABASE' &&
-              levelsData[1].text === element.GRANTED_ON_DATABASE
-            ) {
-              if (levelsData[2] != null) {
-                if (levelsData[2].text === element.GRANTED_ON_SCHEMA && levelsData[2].type === 'SCHEMA') {
-                  if (levelsData[3] != null) {
-                    if (levelsData[4] != null) {
-                      if (
-                        levelsData[4].type === element.GRANTED_ON_TYPE &&
-                        levelsData[4].text === element.GRANTED_ON_NAME
+        // if privilege checkbox is selected, exclude all other privileges tha are not selected
+        if (selectedprivileges.length < 1 || selectedprivileges.includes(element.PRIVILEGE)) {
+          if (selectedObj.parent !== '#') {
+            if (element.GRANTED_ON_DATABASE && levelsData[0] != null && levelsData[0].type === 'DATABASE') {
+              if (
+                levelsData[1] != null &&
+                levelsData[1].type === 'DATABASE' &&
+                levelsData[1].text === element.GRANTED_ON_DATABASE
+              ) {
+                if (levelsData[2] != null) {
+                  if (levelsData[2].text === element.GRANTED_ON_SCHEMA && levelsData[2].type === 'SCHEMA') {
+                    if (levelsData[3] != null) {
+                      if (levelsData[4] != null) {
+                        if (
+                          levelsData[4].type === element.GRANTED_ON_TYPE &&
+                          levelsData[4].text === element.GRANTED_ON_NAME
+                        ) {
+                          return true;
+                        }
+                      } else if (
+                        levelsData[3].text === levelsData[3].type &&
+                        levelsData[3].type === element.GRANTED_ON_TYPE
                       ) {
                         return true;
                       }
                     } else if (
-                      levelsData[3].text === levelsData[3].type &&
-                      levelsData[3].type === element.GRANTED_ON_TYPE
+                      levelsData[2].text === element.GRANTED_ON_NAME &&
+                      levelsData[2].type === element.GRANTED_ON_TYPE
                     ) {
                       return true;
                     }
-                  } else if (
-                    levelsData[2].text === element.GRANTED_ON_NAME &&
-                    levelsData[2].type === element.GRANTED_ON_TYPE
-                  ) {
-                    return true;
                   }
+                } else {
+                  return true;
                 }
-              } else {
+              }
+            } else if (levelsData[0] != null) {
+              if (
+                levelsData[1] != null &&
+                levelsData[1].text === element.GRANTED_ON_NAME &&
+                levelsData[1].type === element.GRANTED_ON_TYPE
+              ) {
                 return true;
               }
             }
-          } else if (levelsData[0] != null) {
-            if (
-              levelsData[1] != null &&
-              levelsData[1].text === element.GRANTED_ON_NAME &&
-              levelsData[1].type === element.GRANTED_ON_TYPE
-            ) {
-              return true;
-            }
+          } else if (
+            selectedObj.parent === '#' &&
+            selectedObj.text === selectedObj.type &&
+            selectedObj.type === element.GRANTED_ON_TYPE
+          ) {
+            return true;
           }
-        } else if (
-          selectedObj.parent === '#' &&
-          selectedObj.text === selectedObj.type &&
-          selectedObj.type === element.GRANTED_ON_TYPE
-        ) {
-          return true;
         }
       }
     }
@@ -212,9 +222,12 @@ const buildObjectNodeRelationship = (renderedNodes, filteredJson) => {
   return renderedNodes.filter((node) => relatedData.some((item) => item.id === node.id));
 };
 
-const filterObjectsOnNodeClick = (json, nodeIds = []) => {
+const filterObjectsOnNodeClick = (json, nodeIds = [], selectedprivileges = []) => {
   let filteredJson = json.filter((element) => {
-    return nodeIds.filter((nodeId) => nodeId === element.toId).length > 0 ? true : false;
+    // if privilege checkbox is selected, exclude all other privileges tha are not selected
+    if (selectedprivileges.length < 1 || selectedprivileges.includes(element.PRIVILEGE)) {
+      return nodeIds.filter((nodeId) => nodeId === element.toId).length > 0 ? true : false;
+    } else return false;
   });
   const x = buildData(filteredJson);
   return x.hierarchy;
