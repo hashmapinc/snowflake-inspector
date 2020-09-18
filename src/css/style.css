@@ -64,11 +64,29 @@
   top: 75px;
   height: 500px;
   width: 250px;
-  z-index: 999999;
+  z-index: 1;
   display: none;
   overflow: scroll;
 }
 
 .privilege-checkboxes {
   overflow: scroll;
+}
+
+.filter-card-objects {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.filter-card-header-objects {
+  color: #007bff;
+}
+
+.filter-card-header-nodes {
+  color: #ffbb78;
+}
+
+.filter-card-nodes {
+  border-color: #ffbb78;
+  color: #ffbb78;
 }
