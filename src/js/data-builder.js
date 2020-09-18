@@ -230,7 +230,10 @@ const filterObjectsOnNodeClick = (json, nodeIds = [], selectedprivileges = []) =
     } else return false;
   });
   const x = buildData(filteredJson);
-  return x.hierarchy;
+
+  //if only children is database and it has no children, then it's a placeholder top level 'DATABASE' folder. Then show empty on the object tree panel
+  if (x.hierarchy.length === 1 && x.hierarchy[0].children.length < 1) return [];
+  else return x.hierarchy;
 };
 
 export { buildData, filterNodes, filterObjectsOnNodeClick };
