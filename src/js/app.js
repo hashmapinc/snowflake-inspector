@@ -16,6 +16,11 @@ let state = {
 };
 
 const init = (rawData) => {
+  // clear old data if any
+  data = {};
+
+  resetPrivilegeFilter();
+
   data.rawData = rawData;
   data.hierarchyFiltered = false;
   data.nodesFiltered = false;
@@ -128,7 +133,9 @@ $('#hierarchy-vis').click(function (e) {
 const resetPrivilegeFilter = () => {
   $('input[type=checkbox]').prop('checked', false);
   $('#filter-card').hide();
-  $('#hierarchy').jstree().deselect_all(true);
+  if ($('#hierarchy').jstree(true)) {
+    $('#hierarchy').jstree().deselect_all(true);
+  }
 
   state.jstreeObject = null;
   state.selectedprivileges = [];
