@@ -27,7 +27,6 @@ const setPrivilegeHeader = (header) => {
   } else if (header === PRIVILEGE_HEADER.OBJECTS.id) {
     $('#privilege-header').text(PRIVILEGE_HEADER.OBJECTS.value);
     $('#privilege-header').addClass('filter-card-header-objects').removeClass('filter-card-header-nodes');
-
     $('#filter-card').addClass('filter-card-objects').removeClass('filter-card-nodes');
   }
 };

@@ -54,7 +54,6 @@ const filterByPrivilege = (privileges) => {
 
 const onNodeClicked = (currentNodeIds, allChildren = []) => {
   if (currentNodeIds.length > 0) {
-    // TODO: Do we need to consider all children as well when privilege is selected??
     saveState({ selectedNodeIds: currentNodeIds.concat(allChildren), nodeSelected: true, objectSelected: false });
 
     // Manually deselect when a node is clicked, otherwise previously clicked object makes jquery fire object on click function.
