@@ -3,7 +3,7 @@ import renderNetwork from './network-vis';
 import renderHierarchy from './hierarchy-vis';
 import '../../node_modules/jquery-ui-dist/jquery-ui';
 import '../../node_modules/jquery-ui-dist/jquery-ui.min.css';
-import { initFilterByPrivleges, setPrivilegeHeader } from './privlege';
+import { initFilterByPrivileges, setPrivilegeHeader } from './privilege';
 import { PRIVILEGE_HEADER } from './constants';
 
 let data = {};
@@ -30,7 +30,7 @@ const init = (rawData) => {
   data.renderedNetwork = renderNetwork(data.formattedData.nodes, data.formattedData.edges);
   renderHierarchy(data.hierarchy);
   initializeSearch();
-  initFilterByPrivleges(data.privileges);
+  initFilterByPrivileges(data.privileges);
 };
 
 const saveState = (newState) => {

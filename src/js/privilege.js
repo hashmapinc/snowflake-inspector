@@ -1,6 +1,6 @@
 import { filterByPrivilege } from './app';
 import { PRIVILEGE_HEADER } from './constants';
-const initFilterByPrivleges = (privileges) => {
+const initFilterByPrivileges = (privileges) => {
   $('#checks').empty();
 
   privileges.forEach(function (privilege) {
@@ -30,4 +30,4 @@ const setPrivilegeHeader = (header) => {
     $('#filter-card').addClass('filter-card-objects').removeClass('filter-card-nodes');
   }
 };
-export { initFilterByPrivleges, setPrivilegeHeader };
+export { initFilterByPrivileges, setPrivilegeHeader };
