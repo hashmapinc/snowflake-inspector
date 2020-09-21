@@ -9,13 +9,18 @@ const renderHierarchy = (tree) => {
         data: tree,
       },
       types: ICONS,
-      plugins: ['types', 'sort'],
+      plugins: ['types', 'sort', 'search'],
     });
-    rendered = tree;
+    rendered = true;
   } else {
     $('#hierarchy').jstree(true).settings.core.data = tree;
     $('#hierarchy').jstree(true).refresh();
   }
 };
+
+$('#hierarchy-selector').keyup(function () {
+  var searchString = $(this).val();
+  $('#hierarchy').jstree('search', searchString);
+});
 
 export default renderHierarchy;

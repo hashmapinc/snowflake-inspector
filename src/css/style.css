@@ -6,7 +6,7 @@
 }
 
 #hierarchy-vis {
-  margin-top: -4em;
+  margin-top: -5em;
   width: 100%;
   height: 90vh;
   overflow: scroll;
@@ -54,6 +54,39 @@
 }
 
 .search-bar {
-  margin-top: 5em;
+  margin-top: 6em;
   margin-left: 15em;
+}
+
+#filter-card {
+  position: fixed;
+  left: 0px;
+  top: 75px;
+  height: 500px;
+  width: 250px;
+  z-index: 1;
+  display: none;
+  overflow: scroll;
+}
+
+.privilege-checkboxes {
+  overflow: scroll;
+}
+
+.filter-card-objects {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.filter-card-header-objects {
+  color: #007bff;
+}
+
+.filter-card-header-nodes {
+  color: #ffbb78;
+}
+
+.filter-card-nodes {
+  border-color: #ffbb78;
+  color: #ffbb78;
 }
