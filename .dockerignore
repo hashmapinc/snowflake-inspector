@@ -1,0 +1,9 @@
+# ignore everything
+**
+
+# include dist
+!/dist
+!dockerfile
+
+# re-exclude trash files
+**/.DS_Store
