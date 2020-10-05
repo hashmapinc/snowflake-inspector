@@ -17,6 +17,17 @@ Alternatively, you can make use of the `Makefile`:
 - Run `npm i` to install dependencies
 - Run `npm start` and visit http://localhost:9000/bundle.html
 
+## How to build and run with Docker
+- Run `npm i` to install dependencies
+- Run `npx webpack --mode=production` to build the production distribution of the static site files
+- Run `docker build -t snowflake-inspector .` to build the image locally.
+- Run `docker run -it -p 8083:80 snowflake-inspector` to run a container based on the image you just built.
+- Access the site at http://localhost:8083/bundle.html
+
+Alternatively, you can make use of the `Makefile`:
+- Run `make install && make container` to install npm modules, generate the production build of Snowflake Inspector, create a local `snowflake-inspector` Docker image (based on `nginx`), and start that container on port `8083`
+- Access the site at http://localhost:8083/bundle.html
+
 ## Reach out + Feedback
 You can contact us at https://www.hashmapinc.com/reach-out if you want to learn more about Hashmap.
 
