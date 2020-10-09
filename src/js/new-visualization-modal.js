@@ -111,3 +111,5 @@ function readSingleFile(event) {
 }
 
 $('#fileinput').on('change', readSingleFile);
+
+export { csvStringToArray };
