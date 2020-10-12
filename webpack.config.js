@@ -28,7 +28,7 @@ let config = {
       filename: 'bundle.css',
     }),
     new CopyWebpackPlugin({
-      patterns: [{ from: './src/data/sample-data.csv' }],
+      patterns: [{ from: './src/data/default-data.csv' }],
     }),
   ],
   module: {

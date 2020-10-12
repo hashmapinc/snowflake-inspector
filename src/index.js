@@ -16,10 +16,10 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 const loadSampleData = () => {
-  const URL = window.location.host + '/sample-data.csv';
+  const URL = window.location.host + '/default-data.csv';
 
   /*  
-    If you have the external URL for the file, you could hardcode the URL like this -  fetch('http://snowflakeinspector.hashmapinc.com/sample-data.csv')
+    If you have the external URL for the file, you could hardcode the URL like this -  fetch('http://snowflakeinspector.hashmapinc.com/default-data.csv')
   */
   fetch('http://' + URL)
     .then((response) => response.text())
