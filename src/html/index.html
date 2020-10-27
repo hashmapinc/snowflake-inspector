@@ -140,10 +140,21 @@
             <div id="hierarchy"></div>
           </div>
         </div>
-        <div class="card sticky-top" id="filter-card">
-          <div class="card-header" id="privilege-header"></div>
-          <div id="checks" class="privilege-checkboxes"></div>
+        <div class="panel-group card sticky-top" id="filter-card">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <a id="privilege-header" class="accordion-toggle" data-toggle="collapse" data-parent="#filter-card" href="#collapseBody">
+              </a>
+            </div>
+            <div id="collapseBody" class="panel-collapse collapse show">
+              <div class="panel-body">
+                <div id="checks" class="privilege-checkboxes"></div> 
+              </div>
+            </div>
+          </div>
         </div>
+
+
       </div>
     </main>
 
