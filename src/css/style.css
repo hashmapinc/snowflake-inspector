@@ -55,15 +55,15 @@
 
 .search-bar {
   margin-top: 6em;
-  margin-left: 15em;
+  margin-left: 17em;
 }
 
 #filter-card {
   position: fixed;
   left: 0px;
   top: 75px;
-  height: 500px;
-  width: 250px;
+  width: 270px;
+  max-height: 500px;
   z-index: 1;
   display: none;
   overflow: scroll;
@@ -71,6 +71,7 @@
 
 .privilege-checkboxes {
   overflow: scroll;
+  padding-top: 5px;
 }
 
 .filter-card-objects {
@@ -89,4 +90,27 @@
 .filter-card-nodes {
   border-color: #ffbb78;
   color: #ffbb78;
+}
+
+.panel-heading .accordion-toggle {
+  font-size: medium;
+}
+
+.panel-heading {
+  background-color: #f8f9fa !important;
+  padding: 10px 10px 10px 3px;
+}
+
+.panel-heading .accordion-toggle:after {
+  font-family: 'Font Awesome 5 Free';
+  /* symbol for "opening" panels */
+  content: '\f0ab';
+  padding-right: 3px;
+  font-weight: 900;
+  right: 0px;
+  top: 10px;
+  position: absolute;
+}
+.panel-heading .accordion-toggle.collapsed:after {
+  content: '\f0a9';
 }
