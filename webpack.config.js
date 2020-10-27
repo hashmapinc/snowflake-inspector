@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 const dist_path = path.resolve(__dirname, 'dist');
 
@@ -13,6 +14,7 @@ let config = {
     path: dist_path,
   },
   plugins: [
+    new FaviconsWebpackPlugin('./src/img/marketing_accelerator_favicon.png'),
     new HtmlWebpackPlugin({
       title: 'Snowflake Inspector by Hashmap',
       hash: true,
