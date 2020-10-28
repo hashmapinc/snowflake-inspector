@@ -1,6 +1,7 @@
 import * as app from './app';
 
 import dataQuery from '../data/data_query.sql';
+import { error } from 'jquery';
 
 let queryResults = null;
 
@@ -82,13 +83,18 @@ function readSingleFile(event) {
   if (file) {
     let fileReader = new FileReader();
     fileReader.onload = function (e) {
+      let lines;
       let contents = e.target.result;
-      let lines = csvStringToArray(contents);
-
-      //remove 1st element which is the header of CSV file
-      const firstElement = lines.shift();
-
       try {
+        if (contents) {
+          lines = csvStringToArray(contents);
+        } else {
+          throw error();
+        }
+
+        //remove 1st element which is the header of CSV file
+        const firstElement = lines.shift();
+
         if (firstElement[0] === 'GRANT_OBJ') {
           queryResults = lines.map((line) => {
             return JSON.parse(line);
