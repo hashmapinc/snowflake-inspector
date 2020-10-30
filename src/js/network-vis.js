@@ -10,17 +10,26 @@ const networkVisDiv = document.getElementById('network-vis');
 const options = {
   nodes: {
     shadow: {
-      enabled: true,
+      enabled: false,
       color: COLORS.nodeShadow,
       size: 10,
       x: 5,
       y: 5,
     },
+    font: {
+      bold: {
+        size: 14,
+        mod: 'bold',
+      },
+      strokeWidth: 0.5,
+      strokeColor: '#343a40',
+    },
+    margin: 8,
   },
   layout: {
     hierarchical: {
       enabled: true,
-      nodeSpacing: 180,
+      nodeSpacing: 270,
       sortMethod: 'directed',
     },
   },
@@ -62,10 +71,10 @@ const renderNetwork = (dataNodes, dataEdges) => {
       label: element.name,
       shape: 'box',
       color: {
-        border: COLORS.nodeBorder,
+        border: getColor(element.type),
         background: getColor(element.type),
         highlight: {
-          border: COLORS.hoverBorder,
+          border: COLORS.highlight,
           background: COLORS.highlight,
         },
         hover: {
@@ -73,7 +82,7 @@ const renderNetwork = (dataNodes, dataEdges) => {
           background: COLORS.hover,
         },
       },
-      widthConstraint: { maximum: 150 },
+      widthConstraint: { maximum: 235 },
       initialColor: getColor(element.type),
     });
   });
@@ -209,10 +218,10 @@ const renderNetwork = (dataNodes, dataEdges) => {
       let oldNodes = nodes.get(oldClickedNodeIds);
       oldNodes.forEach((node) => {
         node.color = {
-          border: COLORS.nodeBorder,
+          border: node.initialColor,
           background: node.initialColor,
           highlight: {
-            border: COLORS.hoverBorder,
+            border: COLORS.highlight,
             background: COLORS.highlight,
           },
           hover: {

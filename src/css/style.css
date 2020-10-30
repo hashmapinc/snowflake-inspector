@@ -17,6 +17,10 @@
   outline: none;
 }
 
+#network-vis .vis-network:focus {
+  outline: none;
+}
+
 .alert {
   display: none;
 }
