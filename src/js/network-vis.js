@@ -143,6 +143,10 @@ const renderNetwork = (dataNodes, dataEdges) => {
                 color: {
                   background: background,
                   border: border,
+                  hover: {
+                    border: COLORS.hoverBorder,
+                    background: COLORS.hover,
+                  },
                 },
               });
             }
