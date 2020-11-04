@@ -66,7 +66,7 @@
   position: fixed;
   left: 0px;
   top: 75px;
-  width: 270px;
+  width: 275px;
   max-height: 500px;
   z-index: 1;
   display: none;
@@ -76,7 +76,7 @@
 .privilege-checkboxes {
   overflow: scroll;
   padding-top: 5px;
-  min-height: 400px;
+  min-height: 410px;
 }
 
 .filter-card-objects {
@@ -89,12 +89,12 @@
 }
 
 .filter-card-header-nodes {
-  color: #ffbb78;
+  color: #eda805;
 }
 
 .filter-card-nodes {
-  border-color: #ffbb78;
-  color: #ffbb78;
+  border-color: #eda805;
+  color: #eda805;
 }
 
 .panel-heading .accordion-toggle {
@@ -103,7 +103,7 @@
 
 .panel-heading {
   background-color: #f8f9fa !important;
-  padding: 10px 10px 10px 3px;
+  padding: 10px 10px 10px 8px;
 }
 
 .panel-heading .accordion-toggle:after {
