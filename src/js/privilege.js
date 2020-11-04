@@ -3,6 +3,7 @@ import { PRIVILEGE_HEADER } from './constants';
 import SelectPure from 'select-pure';
 
 const initFilterByPrivileges = (privileges) => {
+  $('#checks').empty();
   let options = [];
 
   privileges.forEach(function (privilege) {
