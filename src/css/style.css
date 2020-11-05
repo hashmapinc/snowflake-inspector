@@ -64,7 +64,7 @@
 
 #filter-card {
   position: fixed;
-  left: 0px;
+  left: 8px;
   top: 75px;
   width: 275px;
   max-height: 500px;
@@ -89,12 +89,12 @@
 }
 
 .filter-card-header-nodes {
-  color: #eda805;
+  color: #019256;
 }
 
 .filter-card-nodes {
-  border-color: #eda805;
-  color: #eda805;
+  border-color: #019256;
+  color: #019256;
 }
 
 .panel-heading .accordion-toggle {
