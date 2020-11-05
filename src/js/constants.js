@@ -65,6 +65,6 @@ export const ICONS = {
 };
 
 export const PRIVILEGE_HEADER = {
-  NODES: { id: 'NODES', value: 'Filter USERS/ROLES by privileges' },
-  OBJECTS: { id: 'OBJECTS', value: 'Filter OBJECT Hierarchy on the right panel by privileges' },
+  NODES: { id: 'NODES', value: 'Filter Users/Roles by privileges' },
+  OBJECTS: { id: 'OBJECTS', value: 'Filter Object Hierarchy on the right panel by privileges' },
 };
