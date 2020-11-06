@@ -1,22 +1,42 @@
 import { filterByPrivilege } from './app';
 import { PRIVILEGE_HEADER } from './constants';
+import SelectPure from 'select-pure';
+
 const initFilterByPrivileges = (privileges) => {
   $('#checks').empty();
+  let options = [];
 
   privileges.forEach(function (privilege) {
-    $('#checks').append('<input name="chckbox" type="checkbox" value="' + privilege + '"/> ' + privilege + '<br/>');
+    options.push({ label: privilege, value: privilege });
   });
 
-  $('#checks :checkbox')
-    .unbind()
-    .click(function (e) {
-      let allVals = [];
-      $('#checks :checked').each(function () {
-        allVals.push($(this).val());
-      });
+  let autocomplete = new SelectPure('#checks', {
+    options: options,
+    value: [],
+    multiple: true,
+    autocomplete: true,
+    icon: 'fa fa-times',
+    placeholder: 'Click here to select',
+    onChange: (value) => {
+      filterByPrivilege(value);
+    },
+    classNames: {
+      select: 'select-pure__select',
+      dropdownShown: 'select-pure__select--opened',
+      multiselect: 'select-pure__select--multiple',
+      label: 'select-pure__label',
+      placeholder: 'select-pure__placeholder',
+      dropdown: 'select-pure__options',
+      option: 'select-pure__option',
+      autocompleteInput: 'select-pure__autocomplete',
+      selectedLabel: 'select-pure__selected-label',
+      selectedOption: 'select-pure__option--selected',
+      placeholderHidden: 'select-pure__placeholder--hidden',
+      optionHidden: 'select-pure__option--hidden',
+    },
+  });
 
-      filterByPrivilege(allVals);
-    });
+  return autocomplete;
 };
 
 const setPrivilegeHeader = (header) => {

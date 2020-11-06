@@ -13,6 +13,7 @@ let state = {
   selectedNodeIds: [],
   objectSelected: false,
   nodeSelected: false,
+  privilegeAutocoplete: null,
 };
 
 const init = (rawData) => {
@@ -30,7 +31,7 @@ const init = (rawData) => {
   data.renderedNetwork = renderNetwork(data.formattedData.nodes, data.formattedData.edges);
   renderHierarchy(data.hierarchy);
   initializeSearch();
-  initFilterByPrivileges(data.privileges);
+  state.privilegeAutocoplete = initFilterByPrivileges(data.privileges);
 };
 
 const saveState = (newState) => {
@@ -119,7 +120,7 @@ $('#hierarchy').on('select_node.jstree', function (e, jstreeObject) {
   }
 });
 
-$('#hierarchy-vis').click(function (e) {
+$('#hierarchy-vis').on('click', function (e) {
   if (e.target.id === 'hierarchy-vis') {
     if (data.nodesFiltered) {
       data.renderedNetwork.resetNetwork();
@@ -130,12 +131,14 @@ $('#hierarchy-vis').click(function (e) {
 });
 
 const resetPrivilegeFilter = () => {
-  $('input[type=checkbox]').prop('checked', false);
   $('#filter-card').hide();
   if ($('#hierarchy').jstree(true)) {
     $('#hierarchy').jstree().deselect_all(true);
   }
 
+  if (state.privilegeAutocoplete) {
+    state.privilegeAutocoplete.reset();
+  }
   state.jstreeObject = null;
   state.selectedprivileges = [];
   state.selectedNodeIds = [];
