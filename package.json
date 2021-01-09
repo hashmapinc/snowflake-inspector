@@ -21,7 +21,7 @@
   "homepage": "https://github.com/hashmapinc/snowflake-inspector#readme",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
-    "bootstrap": "^4.5.0",
+    "bootstrap": "^4.5.3",
     "favicons-webpack-plugin": "^4.2.0",
     "jquery": "^3.5.1",
     "jquery-ui-dist": "1.12.1",
