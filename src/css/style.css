@@ -244,3 +244,10 @@
 .select-pure__placeholder--hidden {
   display: none;
 }
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+.dropdown-menu {
+  margin-top: 0;
+}
