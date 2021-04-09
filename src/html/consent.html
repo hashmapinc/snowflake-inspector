@@ -53,7 +53,9 @@
                 if (e.data.type == 'hsFormCallback' && e.data.eventName == 'onFormSubmitted')
                     setCookie('_hs_form_submitted', 'hubspot form submitted', 730);
             });
-            deleteCookie('__hs_cookie_cat_pref');
+            // Commented out:  This would be used based on HubSpot cookie policy settings.  The name of the
+            // cookie will depend on the settings chosen.  This is used to reset the cookie selections (ex. in the case of decline).
+            // deleteCookie('__hs_cookie_cat_pref');
         });
         // Local cookie handling funcs.
         function setCookie(name,value,days) {
