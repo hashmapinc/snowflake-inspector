@@ -16,6 +16,9 @@
       function handleCookieOptOut() {
           _hsp.push(['revokeCookieConsent']);
           deleteCookie('_hs_form_submitted');
+          deleteCookie('__hs_opt_out');
+          deleteCookie('__hs_initial_opt_in');
+          deleteCookie('hubspotutk');
           window.open("https://www.hashmapinc.com/opt-out")
           window.location.reload();
       }
