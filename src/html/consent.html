@@ -45,6 +45,9 @@
     </div>
     <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/4376150.js" onload="setEventOnDecline()"></script>
     <script>
+        // test form id:  3f1f2935-1843-44c8-a389-e0470ae8d9cc
+        // prod form id:  9cad5048-5459-404d-88b8-9e251c13b786
+
         // Since the banner is loaded async, the setting of the event on the 'Decline' button must be done through timeouts.
         var bannerLoadCounter = 0;
         function setEventOnDecline() {
@@ -73,7 +76,11 @@
         });
         // Local cookie handling funcs.
         function resetOptOut() {
+            _hsp.push(['revokeCookieConsent']);
+            deleteCookie('_hs_form_submitted');
             deleteCookie('__hs_opt_out');
+            deleteCookie('__hs_initial_opt_in');
+            deleteCookie('hubspotutk');
             document.location.reload();
         }
         function setCookie(name,value,days) {
