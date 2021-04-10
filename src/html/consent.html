@@ -30,6 +30,7 @@
     </header>
     <div style="height:100px">&nbsp;</div>
     <div style="padding:20px">
+        <div id="dv_cookie_opt_out" style="display:none"><b><u>You have declined cookie consent.  You must accept cookies to use the application.  <a href="javascript:resetOptOut()">Click here to re-enable the cookie banner.</a></u></b></div>
     <!--[if lte IE 8]>
     <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
     <![endif]-->
@@ -42,22 +43,39 @@
         });
     </script>
     </div>
-    <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/4376150.js"></script>
+    <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/4376150.js" onload="setEventOnDecline()"></script>
     <script>
+        // Since the banner is loaded async, the setting of the event on the 'Decline' button must be done through timeouts.
+        var bannerLoadCounter = 0;
+        function setEventOnDecline() {
+            if (document.getElementById('hs-eu-decline-button')) {
+               // hs-eu-confirmation-button
+               document.getElementById('hs-eu-decline-button').addEventListener("click", () => { window.location.reload(); }, false);
+            }
+            else {
+                bannerLoadCounter++;
+                if (bannerLoadCounter <= 5)
+                    window.setTimeout('setEventOnDecline();', 1000);
+            }
+        }
         // Add event listener for when the user submits the consent form. This action will write
         // a cookie that will be used in conjunction with the standard HubSpot cookie to ensure user data
         // as well as cookie settings are removed for the user.
         window.addEventListener('DOMContentLoaded', function(){
             window.addEventListener('message', function(e) {
-                // console.log(e);
                 if (e.data.type == 'hsFormCallback' && e.data.eventName == 'onFormSubmitted')
                     setCookie('_hs_form_submitted', 'hubspot form submitted', 730);
             });
-            // Commented out:  This would be used based on HubSpot cookie policy settings.  The name of the
-            // cookie will depend on the settings chosen.  This is used to reset the cookie selections (ex. in the case of decline).
-            // deleteCookie('__hs_cookie_cat_pref');
+           // Handles the decline button.
+           opt_out_cookie = getCookie('__hs_opt_out');
+           if (opt_out_cookie && opt_out_cookie == 'yes')
+               document.getElementById('dv_cookie_opt_out').style.display='inline';
         });
         // Local cookie handling funcs.
+        function resetOptOut() {
+            deleteCookie('__hs_opt_out');
+            document.location.reload();
+        }
         function setCookie(name,value,days) {
             var expires = "";
             if (days) {
