@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cookie and Data Consent</title>
+
+</head>
+<body>
+    <header class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="https://www.hashmapinc.com/" target="_blank">
+        <img src="../img/hashmap_banner_white.png" width="200px" />
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="mx-auto my-2 text-white">
+          <h3>Snowflake Inspector Opt In Form</h3>
+        </div>
+      </div>
+    </header>
+    <div style="height:100px">&nbsp;</div>
+    <div style="padding:20px">
+        <div id="dv_cookie_opt_out" style="display:none"><b><u>You have declined cookie consent.  You must accept cookies to use the application.  <a href="javascript:resetOptOut()">Click here to re-enable the cookie banner.</a></u></b></div>
+    <!--[if lte IE 8]>
+    <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
+    <![endif]-->
+    <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
+    <script>
+        hbspt.forms.create({
+	        region: "na1",
+	        portalId: "4376150",
+	        formId: "9cad5048-5459-404d-88b8-9e251c13b786"
+        });
+    </script>
+    </div>
+    <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/4376150.js" onload="setEventOnDecline()"></script>
+    <script>
+        // Since the banner is loaded async, the setting of the event on the 'Decline' button must be done through timeouts.
+        var bannerLoadCounter = 0;
+        function setEventOnDecline() {
+            if (document.getElementById('hs-eu-decline-button')) {
+               // hs-eu-confirmation-button
+               document.getElementById('hs-eu-decline-button').addEventListener("click", () => { window.location.reload(); }, false);
+            }
+            else {
+                bannerLoadCounter++;
+                if (bannerLoadCounter <= 5)
+                    window.setTimeout('setEventOnDecline();', 1000);
+            }
+        }
+        // Add event listener for when the user submits the consent form. This action will write
+        // a cookie that will be used in conjunction with the standard HubSpot cookie to ensure user data
+        // as well as cookie settings are removed for the user.
+        window.addEventListener('DOMContentLoaded', function(){
+            window.addEventListener('message', function(e) {
+                if (e.data.type == 'hsFormCallback' && e.data.eventName == 'onFormSubmitted')
+                    setCookie('_hs_form_submitted', 'hubspot form submitted', 730);
+            });
+           // Handles the decline button.
+           opt_out_cookie = getCookie('__hs_opt_out');
+           if (opt_out_cookie && opt_out_cookie == 'yes')
+               document.getElementById('dv_cookie_opt_out').style.display='inline';
+        });
+        // Local cookie handling funcs.
+        function resetOptOut() {
+            deleteCookie('__hs_opt_out');
+            document.location.reload();
+        }
+        function setCookie(name,value,days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days*24*60*60*1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+        }
+        function getCookie(name) {
+            var match = document.cookie.match(RegExp('(?:^|;\\s*)' + name + '=([^;]*)'));
+            return match ? match[1] : null;
+        }
+        function deleteCookie(name) {
+            document.cookie = name +"=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+        }
+        // Once the pages is submitted and cookies are accepted, redirect the user back to the main page.
+        if (getCookie("hubspotutk") && getCookie("_hs_form_submitted")) {
+            document.location.href = "bundle.html";
+        }
+    </script>
+</body>
+</html>

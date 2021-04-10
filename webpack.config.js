@@ -22,6 +22,13 @@ let config = {
       path: dist_path,
       template: './src/html/index.html',
     }),
+    new HtmlWebpackPlugin({
+      title: 'Hashmap Consent',
+      hash: true,
+      filename: 'consent.html',
+      path: dist_path,
+      template: './src/html/consent.html',
+    }),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
