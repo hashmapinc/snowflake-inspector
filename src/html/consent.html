@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Cookie and Data Consent</title>
-
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
     <header class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
@@ -39,7 +39,21 @@
         hbspt.forms.create({
 	        region: "na1",
 	        portalId: "4376150",
-	        formId: "9cad5048-5459-404d-88b8-9e251c13b786"
+	        formId: "9cad5048-5459-404d-88b8-9e251c13b786",
+            // Clearout Hubspot Integration
+            onFormReady: function ($form) {
+                var clearout = window.clearout = window.clearout || [],
+                        opts = { 
+                        app_token: "ad06b3f96dd1cdd1e5dd580597c43dd7:e9cd0eea3ab94a34beecf5f7c650a1cb83ac10d890e66130d6cc6ea5252e0478",
+                        mode: "ajax", 
+                        api_url:"https://api.clearout.io"};
+                    clearout.push(["initialize", JSON.stringify(opts), $form]),
+                        function () {
+                            var t = document, e = t.createElement("script"), a = t.getElementsByTagName("script")[0];
+                            e.type = "text/javascript", e.async = !0, e.src = "https://clearout.io/wp-content/co-js-widget/clearout_js_widget.js",
+                            a.parentNode.insertBefore(e, a)
+                     }();
+        }
         });
     </script>
     </div>
