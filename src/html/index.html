@@ -23,11 +23,10 @@
       window.open("https://www.hashmapinc.com/opt-out")
       window.location.reload();
     }
-    //DAH: PUT THIS BACK IN ONCE HUBSPOT FIXES THE SCRIPT ISSUE WITH CSP.
-      // If there is no HubSpot cookie (from HubSpot) or HubSpot form submitted cookie (from Hashmap), show consent form.
-      //if (!getCookie("hubspotutk") || !getCookie("_hs_form_submitted")) {
-      //  document.location.href = "consent.html";
-      //}
+    // If there is no HubSpot cookie (from HubSpot) or HubSpot form submitted cookie (from Hashmap), show consent form.
+    if (!getCookie("hubspotutk") || !getCookie("_hs_form_submitted")) {
+      document.location.href = "consent.html";
+    }
   </script>
 
   <script>
