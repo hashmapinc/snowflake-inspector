@@ -44,11 +44,21 @@ let config = {
     rules: [
       {
         test: /\.html$/i,
-        loader: 'html-loader',
+        use: ["html-loader"],
       },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: ''
+            }
+          },
+          {
+            loader: "css-loader"
+          }
+        ]
       },
       {
         test: /\.(ttf|eot|woff||woff2|otf|svg|png|jpg|gif|ico)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
