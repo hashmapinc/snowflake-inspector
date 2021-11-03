@@ -1,12 +1,13 @@
 version: 2.1
 
 orbs:
+  node: circleci/node@1.1.6
   aws_s3: circleci/aws-s3@1.0.15
 
 jobs:
   build:
     executor:
-      name: node/default
+      name: node:16.8.0
     steps:
       - checkout
       - node/with-cache:
