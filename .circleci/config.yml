@@ -22,7 +22,7 @@ jobs:
             - dist
   deploy:
     docker:
-      - image: 'cimg/python:3.6'
+      - image: 'cimg/node:16.8.0'
     steps:
       - attach_workspace:
           at: /tmp/workspace
