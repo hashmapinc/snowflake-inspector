@@ -7,7 +7,7 @@ orbs:
 jobs:
   build:
     executor:
-      name: node:16.8.0
+      name: node/16.8.0
     steps:
       - checkout
       - node/with-cache:
